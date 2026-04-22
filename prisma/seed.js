@@ -1,7 +1,7 @@
 // Orkestri AI — Database Seed Script
 // Seeds the 3 built-in agents with initial stats
 
-import { PrismaClient } from "../src/generated/prisma/index.js";
+import { PrismaClient } from "@prisma/client";
 import { AGENTS } from "../src/lib/agents.js";
 
 const prisma = new PrismaClient();
