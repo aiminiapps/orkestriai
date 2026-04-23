@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   RiSendPlaneLine,
   RiCoinLine,
@@ -10,13 +10,56 @@ import {
   RiGlobalLine,
   RiFileTextLine,
   RiSearchLine,
+  RiMicroscopeLine,
+  RiLineChartLine,
+  RiShieldKeyholeLine,
+  RiSparklingLine
 } from "react-icons/ri";
 import AppShell from "@/components/layout/AppShell";
-import GlassCard from "@/components/ui/GlassCard";
-import GradientButton from "@/components/ui/GradientButton";
-import AgentAvatar from "@/components/agents/AgentAvatar";
 import { AGENTS, CATEGORIES, LANGUAGES, STYLES } from "@/lib/agents";
 import useAnalysisStore from "@/stores/useAnalysisStore";
+
+const AGENT_ICONS = {
+  research: <RiMicroscopeLine className="w-5 h-5 text-[#7c75ff]" />,
+  market: <RiLineChartLine className="w-5 h-5 text-[#f7c94b]" />,
+  risk: <RiShieldKeyholeLine className="w-5 h-5 text-[#2dd4a0]" />
+};
+
+const QUESTION_PROMPTS = [
+  "What is the short-term market outlook and the key support/resistance levels?",
+  "Analyze the tokenomics: are there any red flags or vesting unlocks coming up?",
+  "Evaluate the long-term fundamental viability and competitive positioning.",
+  "Track recent whale movements and analyze the on-chain liquidity depth."
+];
+
+// Reusable Luxury Container
+const LuxuryContainer = ({ children, className = "" }) => (
+  <div 
+    className={`rounded-2xl p-[1px] relative overflow-visible ${className}`}
+    style={{
+      background: 'repeating-linear-gradient(45deg, rgba(124,117,255,0.15), rgba(124,117,255,0.15) 10px, rgba(247,201,75,0.08) 10px, rgba(247,201,75,0.08) 20px)'
+    }}
+  >
+    <div className="bg-[#0b0c10] w-full h-full rounded-2xl p-6 relative z-10">
+      {children}
+    </div>
+  </div>
+);
+
+const LuxuryButton = ({ children, disabled, type = "button", className = "" }) => (
+  <button
+    type={type}
+    disabled={disabled}
+    className={`w-full relative rounded-xl p-[2px] overflow-hidden transition-all duration-300 ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.01] active:scale-[0.99]"} ${className}`}
+    style={{
+      background: 'repeating-linear-gradient(-45deg, rgba(124,117,255,0.6), rgba(124,117,255,0.6) 10px, rgba(45,212,160,0.4) 10px, rgba(45,212,160,0.4) 20px)'
+    }}
+  >
+    <div className="bg-[#0b0c10] w-full h-full rounded-[10px] py-4 flex items-center justify-center font-medium text-white/90 relative z-10 hover:bg-[#11131c] transition-colors">
+      {children}
+    </div>
+  </button>
+);
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -30,8 +73,79 @@ const fadeUp = {
 export default function ArenaPage() {
   const router = useRouter();
   const { input, setInput, resetAnalysis } = useAnalysisStore();
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  
+  // CoinGecko State
+  const [searchQuery, setSearchQuery] = useState(input.token || "");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const autocompleteRef = useRef(null);
+  const debounceTimer = useRef(null);
+
+  useEffect(() => {
+    // Click outside to close dropdown
+    const handleClickOutside = (e) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const fetchCoinGecko = useCallback((query) => {
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+    setIsSearching(true);
+    fetch(`https://api.coingecko.com/api/v3/search?query=${query}`)
+      .then(res => res.json())
+      .then(data => {
+        setSuggestions(data.coins?.slice(0, 5) || []);
+      })
+      .catch(err => {
+        console.error("CoinGecko search failed:", err);
+      })
+      .finally(() => setIsSearching(false));
+  }, []);
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setInput("token", val);
+    setSearchQuery(val);
+    setShowSuggestions(true);
+
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      fetchCoinGecko(val);
+    }, 400);
+  };
+
+  const handleSelectToken = async (coin) => {
+    setInput("token", coin.name);
+    setSearchQuery(coin.name);
+    setShowSuggestions(false);
+    
+    // Attempt to fetch contract address
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`);
+      const data = await res.json();
+      const platforms = data.platforms || {};
+      
+      const contract = Object.values(platforms).find(val => val && typeof val === 'string' && val.trim().length > 0) || '';
+      setInput("contractAddress", contract);
+    } catch (e) {
+      console.error("Failed to fetch contract address:", e);
+    }
+  };
+
+  const handlePromptClick = (prompt) => {
+    setInput("question", prompt);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,207 +177,215 @@ export default function ArenaPage() {
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
         >
           {/* Header */}
-          <motion.div variants={fadeUp} custom={0} className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">
-              Analysis <span className="text-gradient">Arena</span>
+          <motion.div variants={fadeUp} custom={0} className="mb-10 text-center">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+              Analysis <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-[#7c75ff] to-[#4a9eff]">Arena</span>
             </h1>
-            <p className="text-white/40">
-              Submit your crypto question and let three AI agents compete to
-              deliver the best analysis.
+            <p className="text-white/50 max-w-2xl mx-auto text-sm md:text-base font-light">
+              Submit your crypto question and let three elite AI agents compete to deliver pixel-perfect analytics and insights.
             </p>
           </motion.div>
 
-          {/* Agent cards */}
+          {/* Agent cards built with luxurious inline design */}
           <motion.div
             variants={fadeUp}
             custom={1}
-            className="grid grid-cols-3 gap-3 mb-8"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10"
           >
             {AGENTS.map((agent) => (
-              <GlassCard
+              <div 
                 key={agent.slug}
-                className="flex items-center gap-3 p-4"
-                glow={agent.slug}
+                className="flex items-center gap-4 p-4 rounded-xl relative group transition-all"
+                style={{
+                  background: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.015), rgba(255,255,255,0.015) 8px, transparent 8px, transparent 16px)',
+                  border: `1px solid ${agent.avatarColor}30`,
+                  backgroundColor: '#0a0b12'
+                }}
               >
-                <AgentAvatar
-                  slug={agent.slug}
-                  emoji={agent.emoji}
-                  color={agent.avatarColor}
-                  size="sm"
-                />
-                <div className="hidden sm:block">
-                  <p className="text-sm font-semibold">{agent.name}</p>
-                  <p className="text-[11px] text-white/30 font-mono">
+                <div 
+                  className="w-[42px] h-[42px] rounded-full flex items-center justify-center relative shadow-none"
+                  style={{
+                    background: `linear-gradient(135deg, ${agent.avatarColor}20, ${agent.avatarColor}05)`,
+                    border: `1px solid ${agent.avatarColor}40`
+                  }}
+                >
+                  {AGENT_ICONS[agent.slug]}
+                </div>
+                <div>
+                  <p className="text-[15px] font-semibold text-white/90">{agent.name}</p>
+                  <p className="text-xs text-white/40 font-mono tracking-tight uppercase">
                     {agent.type}
                   </p>
                 </div>
-              </GlassCard>
+              </div>
             ))}
           </motion.div>
 
-          {/* Input Form */}
+          {/* Input Form Wrapp*/}
           <motion.div variants={fadeUp} custom={2}>
             <form onSubmit={handleSubmit}>
-              <GlassCard className="space-y-6">
-                {/* Token Name */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-2">
-                    <RiCoinLine className="text-[#f7c94b]" />
-                    Token / Project Name *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Bitcoin, Ethereum, Solana..."
-                    value={input.token}
-                    onChange={(e) => setInput("token", e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/50 focus:ring-1 focus:ring-[#7c75ff]/20 transition-all text-sm"
-                    required
-                  />
+              <LuxuryContainer className="space-y-8">
+                
+                {/* Search Fields Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative" ref={autocompleteRef}>
+                  {/* Token Name with Autocomplete */}
+                  <div className="relative">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-white/80 mb-2.5">
+                      <RiCoinLine className="text-[#f7c94b]" />
+                      Token / Project Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bitcoin, Solana..."
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      className="w-full px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-sm shadow-none"
+                      required
+                    />
+
+                    {/* Suggestions Dropdown */}
+                    <AnimatePresence>
+                      {showSuggestions && (suggestions.length > 0 || isSearching) && (
+                        <motion.ul 
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          className="absolute z-50 w-full mt-2 bg-[#0d0f1a] border border-white/10 rounded-xl overflow-hidden backdrop-blur-2xl py-1 shadow-none"
+                        >
+                          {isSearching ? (
+                            <li className="px-5 py-4 text-xs text-white/30 text-center animate-pulse">Searching CoinGecko...</li>
+                          ) : (
+                            suggestions.map((coin) => (
+                              <li 
+                                key={coin.id} 
+                                onClick={() => handleSelectToken(coin)}
+                                className="px-5 py-3 hover:bg-white/[0.04] cursor-pointer flex items-center gap-4 transition-colors border-b border-white/[0.02] last:border-0"
+                              >
+                                <img src={coin.thumb} alt={coin.name} className="w-5 h-5 rounded-full object-cover" />
+                                <span className="text-white/90 text-sm font-medium">{coin.name}</span>
+                                <span className="text-white/30 text-xs font-mono uppercase">{coin.symbol}</span>
+                              </li>
+                            ))
+                          )}
+                        </motion.ul>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Contract Address */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-white/80 mb-2.5">
+                      <RiSearchLine className="text-[#4a9eff]" />
+                      Contract Address (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="0x... (Auto-fills if available)"
+                      value={input.contractAddress}
+                      onChange={(e) => setInput("contractAddress", e.target.value)}
+                      className="w-full px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-sm font-mono shadow-none"
+                    />
+                  </div>
                 </div>
 
-                {/* Contract Address */}
+                {/* Question Text Area */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-2">
-                    <RiSearchLine className="text-[#4a9eff]" />
-                    Contract Address (optional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="0x..."
-                    value={input.contractAddress}
-                    onChange={(e) =>
-                      setInput("contractAddress", e.target.value)
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/50 focus:ring-1 focus:ring-[#7c75ff]/20 transition-all text-sm font-mono"
-                  />
-                </div>
-
-                {/* Question */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-white/80 mb-2.5">
                     <RiQuestionLine className="text-[#7c75ff]" />
                     Analysis Question / Request *
                   </label>
                   <textarea
-                    placeholder="e.g. Is this project attractive for short-term investment? What are the risks?"
+                    placeholder="Provide a detailed scenario or click a suggestion below..."
                     value={input.question}
                     onChange={(e) => setInput("question", e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/50 focus:ring-1 focus:ring-[#7c75ff]/20 transition-all text-sm resize-none"
+                    className="w-full px-5 py-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-sm resize-none shadow-none leading-relaxed"
                     required
                   />
+
+                  {/* Question Suggestions */}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="text-[11px] text-white/30 font-medium uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                      <RiSparklingLine /> Let's try:
+                    </span>
+                    {QUESTION_PROMPTS.map((prompt, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handlePromptClick(prompt)}
+                        className="text-[11px] bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/20 text-white/60 hover:text-white/90 px-2.5 py-1 rounded-md transition-colors text-left max-w-[200px] sm:max-w-xs truncate shadow-none"
+                        title={prompt}
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Options Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Category */}
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-2">
-                      <RiFileTextLine className="text-[#2dd4a0]" />
-                      Category
-                    </label>
-                    <select
-                      value={input.category}
-                      onChange={(e) => setInput("category", e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white focus:outline-none focus:border-[#7c75ff]/50 transition-all text-sm appearance-none cursor-pointer"
-                    >
-                      {CATEGORIES.map((cat) => (
-                        <option
-                          key={cat}
-                          value={cat}
-                          className="bg-[#0d0f1a] text-white"
-                        >
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Language */}
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-2">
-                      <RiGlobalLine className="text-[#4a9eff]" />
-                      Language
-                    </label>
-                    <select
-                      value={input.language}
-                      onChange={(e) => setInput("language", e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white focus:outline-none focus:border-[#7c75ff]/50 transition-all text-sm appearance-none cursor-pointer"
-                    >
-                      {LANGUAGES.map((lang) => (
-                        <option
-                          key={lang}
-                          value={lang}
-                          className="bg-[#0d0f1a] text-white"
-                        >
-                          {lang}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Style */}
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-white/70 mb-2">
-                      <RiFileTextLine className="text-[#ff6b5b]" />
-                      Style
-                    </label>
-                    <select
-                      value={input.style}
-                      onChange={(e) => setInput("style", e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white focus:outline-none focus:border-[#7c75ff]/50 transition-all text-sm appearance-none cursor-pointer"
-                    >
-                      {STYLES.map((s) => (
-                        <option
-                          key={s}
-                          value={s}
-                          className="bg-[#0d0f1a] text-white"
-                        >
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  {[
+                    { label: "Category", icon: RiFileTextLine, color: "#2dd4a0", key: "category", options: CATEGORIES },
+                    { label: "Language", icon: RiGlobalLine, color: "#4a9eff", key: "language", options: LANGUAGES },
+                    { label: "Style", icon: RiFileTextLine, color: "#ff6b5b", key: "style", options: STYLES },
+                  ].map((field) => (
+                    <div key={field.key}>
+                      <label className="flex items-center gap-2 text-[13px] font-semibold text-white/70 mb-2">
+                        <field.icon style={{ color: field.color }} />
+                        {field.label}
+                      </label>
+                      <select
+                        value={input[field.key]}
+                        onChange={(e) => setInput(field.key, e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg bg-white/[0.02] border border-white/[0.06] text-white/90 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-[13px] appearance-none cursor-pointer shadow-none"
+                      >
+                        {field.options.map((opt) => (
+                          <option key={opt} value={opt} className="bg-[#0b0c10] text-white/90">
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Error */}
+                {/* Error Block */}
                 {error && (
-                  <div className="px-4 py-3 rounded-xl bg-[#ff6b5b]/10 border border-[#ff6b5b]/20 text-[#ff6b5b] text-sm">
+                  <div className="px-5 py-4 rounded-xl bg-[#ff6b5b]/5 border border-[#ff6b5b]/20 text-[#ff6b5b]/90 text-sm shadow-none">
                     {error}
                   </div>
                 )}
 
-                {/* Submit */}
-                <GradientButton
-                  type="submit"
-                  size="lg"
-                  className="w-full"
-                  disabled={
-                    isSubmitting || !input.token.trim() || !input.question.trim()
-                  }
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Dispatching to Agents...
-                      </>
-                    ) : (
-                      <>
-                        <RiSendPlaneLine />
-                        Submit Analysis
-                      </>
-                    )}
-                  </span>
-                </GradientButton>
-              </GlassCard>
+                {/* Submit Button */}
+                <div className="pt-2">
+                  <LuxuryButton
+                    type="submit"
+                    disabled={isSubmitting || !input.token.trim() || !input.question.trim()}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/20 border-t-white/90 rounded-full animate-spin shadow-none" />
+                          <span className="tracking-wide">Orchestrating Intel...</span>
+                        </>
+                      ) : (
+                        <>
+                          <RiSendPlaneLine className="text-xl" />
+                          <span className="tracking-wide uppercase text-sm font-bold">Commence Analysis</span>
+                        </>
+                      )}
+                    </span>
+                  </LuxuryButton>
+                </div>
+                
+              </LuxuryContainer>
             </form>
           </motion.div>
         </motion.div>
