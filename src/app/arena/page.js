@@ -186,9 +186,9 @@ export default function ArenaPage() {
           {/* Header */}
           <motion.div variants={fadeUp} custom={0} className="mb-10 text-center">
             <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
-              Analysis <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-[#7c75ff] to-[#4a9eff]">Arena</span>
+              Analysis <span className="text-[#7c75ff]">Arena</span>
             </h1>
-            <p className="text-white/50 max-w-2xl mx-auto text-sm md:text-base font-light">
+            <p className="text-white/50 max-w-2xl text-balance mx-auto text-sm md:text-base font-light">
               Submit your crypto question and let three elite AI agents compete to deliver pixel-perfect analytics and insights.
             </p>
           </motion.div>
