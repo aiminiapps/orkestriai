@@ -35,13 +35,29 @@ const QUESTION_PROMPTS = [
 // Reusable Luxury Container
 const LuxuryContainer = ({ children, className = "" }) => (
   <div 
-    className={`rounded-2xl p-[1px] relative overflow-visible ${className}`}
-    style={{
-      background: 'repeating-linear-gradient(45deg, rgba(124,117,255,0.15), rgba(124,117,255,0.15) 10px, rgba(247,201,75,0.08) 10px, rgba(247,201,75,0.08) 20px)'
-    }}
+    className={`rounded p-[1px] relative bg-[#7c75ff]/20 ${className}`}
   >
-    <div className="bg-[#0b0c10] w-full h-full rounded-2xl p-6 relative z-10">
-      {children}
+    <div className="bg-[#0b0c10] w-full h-full rounded-2xl p-6 relative z-10 pl-8">
+      {/* Left decorative pattern bar */}
+      <div 
+        className="absolute left-0 top-0 w-6 h-full border-r border-[var(--pattern-fg)] pointer-events-none"
+        style={{
+          "--pattern-fg": "rgba(124, 117, 255, 0.2)",
+          backgroundImage: "repeating-linear-gradient(315deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
+          backgroundSize: "10px 10px"
+        }}
+      />
+      <div 
+        className="absolute right-0 top-0 w-6 h-full border-l border-[var(--pattern-fg)] pointer-events-none"
+        style={{
+          "--pattern-fg": "rgba(124, 117, 255, 0.2)",
+          backgroundImage: "repeating-linear-gradient(315deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
+          backgroundSize: "10px 10px"
+        }}
+      />
+      <div className="px-2">
+        {children}
+      </div>
     </div>
   </div>
 );
