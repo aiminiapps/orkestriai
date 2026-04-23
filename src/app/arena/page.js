@@ -37,7 +37,7 @@ const LuxuryContainer = ({ children, className = "" }) => (
   <div 
     className={`rounded p-[1px] relative bg-[#7c75ff]/20 ${className}`}
   >
-    <div className="bg-[#0b0c10] w-full h-full rounded-2xl p-6 relative z-10 pl-8">
+    <div className="bg-[#0b0c10]/90 w-full h-full p-6 relative z-10 pl-8">
       {/* Left decorative pattern bar */}
       <div 
         className="absolute left-0 top-0 w-6 h-full border-r border-[var(--pattern-fg)] pointer-events-none"
