@@ -63,18 +63,50 @@ const LuxuryContainer = ({ children, className = "" }) => (
 );
 
 const LuxuryButton = ({ children, disabled, type = "button", className = "" }) => (
-  <button
+  <motion.button
     type={type}
     disabled={disabled}
-    className={`w-full relative rounded-xl p-[2px] overflow-hidden transition-all duration-300 ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.01] active:scale-[0.99]"} ${className}`}
+    whileHover={disabled ? {} : { scale: 1.01 }}
+    whileTap={disabled ? {} : { scale: 0.985 }}
+    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+    className={`w-full relative rounded-xl p-[2px] overflow-hidden group ${disabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-[0_0_35px_-5px_rgba(124,117,255,0.4)]"} ${className}`}
     style={{
-      background: 'repeating-linear-gradient(-45deg, rgba(124,117,255,0.6), rgba(124,117,255,0.6) 10px, rgba(45,212,160,0.4) 10px, rgba(45,212,160,0.4) 20px)'
+      background: 'repeating-linear-gradient(-45deg, rgba(124,117,255,0.8), rgba(124,117,255,0.8) 12px, rgba(45,212,160,0.6) 12px, rgba(45,212,160,0.6) 24px)'
     }}
   >
-    <div className="bg-[#0b0c10] w-full h-full rounded-[10px] py-4 flex items-center justify-center font-medium text-white/90 relative z-10 hover:bg-[#11131c] transition-colors">
-      {children}
+    <div className="bg-gradient-to-br from-[#1b1c38]/95 via-[#0d0f1a]/95 to-[#0b161f]/95 w-full h-full rounded-[10px] py-4 relative z-10 flex items-center justify-center font-bold text-white tracking-wide transition-all duration-500 overflow-hidden backdrop-blur-xl">
+      
+      {/* Sweeping light effect on hover */}
+      <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1200ms] ease-in-out bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 pointer-events-none" />
+
+      {/* Subtle pulsing glow inside */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#7c75ff]/0 via-[#7c75ff]/15 to-[#4ad4a0]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+      {/* Left pattern inset */}
+      <div 
+        className="absolute left-0 top-0 w-10 h-full border-r border-[#ffffff10] pointer-events-none opacity-70 group-hover:opacity-100 transition-all duration-500 bg-[#7c75ff]/5"
+        style={{
+          "--pattern-fg": "rgba(124, 117, 255, 0.4)",
+          backgroundImage: "repeating-linear-gradient(315deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
+          backgroundSize: "6px 6px"
+        }}
+      />
+      
+      {/* Right pattern inset */}
+      <div 
+        className="absolute right-0 top-0 w-10 h-full border-l border-[#ffffff10] pointer-events-none opacity-70 group-hover:opacity-100 transition-all duration-500 bg-[#2dd4a0]/5"
+        style={{
+          "--pattern-fg": "rgba(45, 212, 160, 0.4)",
+          backgroundImage: "repeating-linear-gradient(45deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
+          backgroundSize: "6px 6px"
+        }}
+      />
+
+      <div className="relative z-10 group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-500">
+        {children}
+      </div>
     </div>
-  </button>
+  </motion.button>
 );
 
 const fadeUp = {

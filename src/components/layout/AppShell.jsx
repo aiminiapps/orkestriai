@@ -20,6 +20,6 @@ export default function AppShell({ children }) {
 
       {/* Mobile bottom nav */}
       <MobileNav />
-    </div>
+    </div> 
   );
 }
