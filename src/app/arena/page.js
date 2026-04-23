@@ -296,7 +296,7 @@ export default function ArenaPage() {
                 </div>
 
                 {/* Question Text Area */}
-                <div>
+                <div className="mt-4">
                   <label className="flex items-center gap-2 text-sm font-semibold text-white/80 mb-2.5">
                     <RiQuestionLine className="text-[#7c75ff]" />
                     Analysis Question / Request *
@@ -330,7 +330,7 @@ export default function ArenaPage() {
                 </div>
 
                 {/* Options Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5">
                   {[
                     { label: "Category", icon: RiFileTextLine, color: "#2dd4a0", key: "category", options: CATEGORIES },
                     { label: "Language", icon: RiGlobalLine, color: "#4a9eff", key: "language", options: LANGUAGES },
@@ -364,7 +364,7 @@ export default function ArenaPage() {
                 )}
 
                 {/* Submit Button */}
-                <div className="pt-2">
+                <div className="pt-2 mt-6">
                   <LuxuryButton
                     type="submit"
                     disabled={isSubmitting || !input.token.trim() || !input.question.trim()}
