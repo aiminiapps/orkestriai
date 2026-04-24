@@ -30,7 +30,6 @@ import {
   useReactFlow 
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import dagre from 'dagre';
 
 const AGENT_ICONS = {
   research: <RiMicroscopeLine className="w-[20px] h-[20px]" />,
@@ -160,14 +159,21 @@ const SectionNode = ({ data }) => {
   return (
     <>
       <Handle type="target" position={Position.Left} className="!opacity-0 !w-0" />
-      <div className={`w-[450px] rounded-xl p-[1px] ${data.isWinnerNode ? 'bg-[#f7c94b]/30 shadow-[0_0_30px_-5px_rgba(247,201,75,0.15)]' : 'bg-white/[0.03]'} transition-colors duration-500`}>
-        <div className="bg-[#0b0c13] p-6 rounded-xl border border-transparent flex flex-col shadow-2xl">
-          <h4 className="text-[13px] font-extrabold text-white/90 mb-3 pb-3 border-b border-white/[0.05] tracking-wide uppercase">{data.title}</h4>
-          <div className="text-[14px] leading-relaxed text-white/60 max-h-[300px] overflow-y-auto custom-scrollbar pr-3 nodrag nowheel font-light">
+      <div className={`w-[520px] h-[240px] rounded-2xl p-[1px] ${data.isWinnerNode ? 'bg-gradient-to-br from-[#f7c94b]/50 to-transparent shadow-[0_0_30px_-5px_rgba(247,201,75,0.15)] scale-[1.02]' : 'bg-gradient-to-br from-white/[0.1] to-transparent shadow-2xl hover:scale-[1.01]'} transition-all duration-500 overflow-hidden`}>
+        <div className="bg-[#0b0c13]/95 w-full h-full p-6 rounded-2xl border border-transparent flex flex-col backdrop-blur-3xl relative">
+          
+          <div className="absolute top-0 right-0 w-40 h-40 bg-[#7c75ff]/10 blur-[60px] pointer-events-none rounded-full" />
+          
+          <h4 className="text-[13px] font-extrabold text-[#7c75ff] mb-3 pb-3 border-b border-white/[0.05] tracking-widest uppercase flex items-center gap-2">
+            <RiSparklingLine className="text-lg" /> {data.title}
+          </h4>
+          
+          <div className="premium-markdown flex-1 text-[13.5px] leading-relaxed text-white/70 overflow-y-auto custom-scrollbar pr-3 nodrag nowheel font-light">
             <MarkdownRenderer content={data.content} />
           </div>
         </div>
       </div>
+      <Handle type="source" position={Position.Right} className="!opacity-0 !w-0" />
     </>
   );
 };
@@ -198,38 +204,81 @@ const parseMarkdownNodes = (markdownText) => {
   return sections;
 };
 
-const getLayoutedElements = (nodes, edges) => {
-  const dagreGraph = new dagre.graphlib.Graph();
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
+const getLayoutedElements = (analysis, responses, winner, handleVote, voting, voted) => {
+  const nodes = [];
+  const edges = [];
   
-  // Arrange tree from Left to Right with generous spacing
-  dagreGraph.setGraph({ rankdir: 'LR', ranksep: 220, nodesep: 150 });
+  // 1. Plot the Main Root Hub at Origin
+  nodes.push({ id: 'hub', type: 'hub', data: { analysis }, position: { x: 0, y: 0 } });
 
-  nodes.forEach((node) => {
-    let w = 440, h = 300;
-    if (node.type === 'agent') { w = 360; h = 180; }
-    if (node.type === 'section') { w = 450; h = 400; }
-    dagreGraph.setNode(node.id, { width: w, height: h });
+  const START_Y = -1200;
+  const AGENT_GAP_Y = 1200; // Large vertical gap between agents
+  const AGENT_X = 650;      // Distance strictly to the right
+  
+  responses.forEach((resp, i) => {
+    const agentId = resp.agentSlug;
+    const isWinnerNode = winner === agentId;
+    const agentY = START_Y + (i * AGENT_GAP_Y);
+    
+    // 2. Plot the Agent Nodes
+    nodes.push({
+      id: `agent-${agentId}`,
+      type: 'agent',
+      data: { agentSlug: agentId, responseMs: resp.responseMs, isWinnerNode, voted, isLoser: voted && !isWinnerNode, onVote: () => handleVote(agentId), voting: voting && (winner === agentId) },
+      position: { x: AGENT_X, y: agentY }
+    });
+
+    // 3. Connect Hub -> Agent
+    edges.push({
+      id: `edge-hub-${agentId}`,
+      source: 'hub',
+      target: `agent-${agentId}`,
+      type: 'smoothstep',
+      animated: isWinnerNode,
+      style: { stroke: isWinnerNode ? '#f7c94b' : 'rgba(124,117,255,0.4)', strokeWidth: isWinnerNode ? 4 : 2 },
+    });
+
+    // 4. Plot Sections in a 2-Column Horizontal Grid Matrix
+    const sections = parseMarkdownNodes(resp.content);
+    
+    const SECTION_START_X = AGENT_X + 550;
+    const COL_GAP = 580; // horizontal distance between columns
+    const ROW_GAP = 280; // vertical height gap per row
+    
+    const totalRows = Math.ceil(sections.length / 2);
+    const gridHeight = totalRows * ROW_GAP;
+    // Align grid center exactly with the Agent's Y axis
+    const startSecY = agentY - (gridHeight / 2) + (ROW_GAP / 2);
+
+    sections.forEach((sec, idx) => {
+      const secId = `section-${agentId}-${idx}`;
+      const col = idx % 2; // Col 0 or Col 1
+      const row = Math.floor(idx / 2);
+      
+      const secX = SECTION_START_X + (col * COL_GAP);
+      const secY = startSecY + (row * ROW_GAP);
+      
+      nodes.push({
+        id: secId,
+        type: 'section',
+        data: { title: sec.title, content: sec.content, isWinnerNode },
+        position: { x: secX, y: secY }
+      });
+      
+      // Edge from Agent -> Multi-Sections 
+      // Using smoothstep keeps connections mathematically clean when dodging columns
+      edges.push({
+        id: `edge-${agentId}-${secId}`,
+        source: `agent-${agentId}`,
+        target: secId,
+        type: 'smoothstep',
+        animated: isWinnerNode,
+        style: { stroke: isWinnerNode ? 'rgba(247,201,75,0.4)' : 'rgba(255,255,255,0.08)', strokeWidth: 2 },
+      });
+    });
   });
 
-  edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
-
-  dagre.layout(dagreGraph);
-
-  const layoutedNodes = nodes.map((node) => {
-    const nodeWithPosition = dagreGraph.node(node.id);
-    return {
-      ...node,
-      targetPosition: Position.Left,
-      sourcePosition: Position.Right,
-      position: {
-        x: nodeWithPosition.x - nodeWithPosition.width / 2,
-        y: nodeWithPosition.y - nodeWithPosition.height / 2,
-      },
-    };
-  });
-
-  return { nodes: layoutedNodes, edges };
+  return { nodes, edges };
 };
 
 /* =========================================================================
@@ -244,67 +293,8 @@ const FlowMapCanvas = ({ analysis, responses, winner, handleVote, voting, voted 
   const nodeTypes = useMemo(() => ({ hub: HubNode, agent: AgentNode, section: SectionNode }), []);
 
   useEffect(() => {
-    const newNodes = [];
-    const newEdges = [];
-
-    // Root Query Node
-    newNodes.push({
-      id: 'hub',
-      type: 'hub',
-      data: { analysis },
-    });
-
-    responses.forEach(resp => {
-      const agentId = resp.agentSlug;
-      const isWinnerNode = winner === agentId;
-      
-      // Agent Intermediary Node
-      newNodes.push({
-        id: `agent-${agentId}`,
-        type: 'agent',
-        data: { 
-          agentSlug: agentId, 
-          responseMs: resp.responseMs,
-          isWinnerNode,
-          voted,
-          isLoser: voted && !isWinnerNode,
-          onVote: () => handleVote(agentId),
-          voting: voting && (winner === agentId)
-        },
-      });
-
-      newEdges.push({
-        id: `edge-hub-${agentId}`,
-        source: 'hub',
-        target: `agent-${agentId}`,
-        type: 'default', // Smooth curve
-        animated: isWinnerNode,
-        style: { stroke: isWinnerNode ? '#f7c94b' : 'rgba(124,117,255,0.4)', strokeWidth: isWinnerNode ? 4 : 2 },
-      });
-
-      // Split Markdown Content into Sub-Nodes
-      const sections = parseMarkdownNodes(resp.content);
-      sections.forEach((sec, idx) => {
-        const secId = `section-${agentId}-${idx}`;
-        newNodes.push({
-          id: secId,
-          type: 'section',
-          data: { title: sec.title, content: sec.content, isWinnerNode },
-        });
-        
-        newEdges.push({
-          id: `edge-${agentId}-${secId}`,
-          source: `agent-${agentId}`,
-          target: secId,
-          type: 'default',
-          animated: isWinnerNode,
-          style: { stroke: isWinnerNode ? 'rgba(247,201,75,0.4)' : 'rgba(255,255,255,0.06)', strokeWidth: 2 },
-        });
-      });
-    });
-
-    // Compute automatic perfect layout geometry via Dagre
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges);
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(analysis, responses, winner, handleVote, voting, voted);
+    
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
 
@@ -441,6 +431,23 @@ export default function InfiniteComparisonPage({ params }) {
         /* Prevents standard text scrolling from scrolling the canvas */
         .react-flow__node {
           cursor: default;
+        }
+        
+        /* Premium Highlights for Sub Node Markdown Data */
+        .premium-markdown .prose strong {
+          color: #fff;
+          font-weight: 700;
+          background: rgba(124,117,255,0.15);
+          padding: 2px 6px;
+          border-radius: 6px;
+          border: 1px solid rgba(124,117,255,0.3);
+          box-shadow: 0 0 10px rgba(124,117,255,0.1);
+        }
+        .premium-markdown .prose ul > li::marker {
+          color: #2dd4a0;
+        }
+        .premium-markdown .prose p {
+          margin-bottom: 0.6em;
         }
       `}</style>
 
