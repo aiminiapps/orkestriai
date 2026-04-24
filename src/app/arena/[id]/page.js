@@ -132,17 +132,13 @@ const HubNode = ({ data }) => {
             backgroundSize: "8px 8px",
           }}
         />
-        <div className="pl-7 pr-6 py-6">
-          <div className="flex items-center gap-2 text-[10px] text-[#7c75ff] font-bold uppercase tracking-[0.2em] mb-4">
-            <RiSparklingLine className="text-sm" />
-            Intelligence Core
-          </div>
+        <div className="pl-8 pr-6 py-6">
 
           {/* Token + Price Row */}
           <div className="flex items-end justify-between mb-3">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center just gap-3">
               {market?.image && (
-                <img src={market.image} alt="" className="w-9 h-9 rounded-full" />
+                <img src={market.image} alt="" className="w-9 h-9 rounded-full mx-auto my-auto" />
               )}
               <div>
                 <h2 className="text-3xl font-extrabold text-white tracking-tight">
