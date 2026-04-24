@@ -66,43 +66,32 @@ const LuxuryButton = ({ children, disabled, type = "button", className = "" }) =
   <motion.button
     type={type}
     disabled={disabled}
-    whileHover={disabled ? {} : { scale: 1.01 }}
-    whileTap={disabled ? {} : { scale: 0.985 }}
+    whileHover={disabled ? {} : { scale: 1.02 }}
+    whileTap={disabled ? {} : { scale: 0.98 }}
     transition={{ type: "spring", stiffness: 400, damping: 15 }}
-    className={`w-full relative rounded-xl p-[2px] overflow-hidden group ${disabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-[0_0_35px_-5px_rgba(124,117,255,0.4)]"} ${className}`}
-    style={{
-      background: 'repeating-linear-gradient(-45deg, rgba(124,117,255,0.8), rgba(124,117,255,0.8) 12px, rgba(45,212,160,0.6) 12px, rgba(45,212,160,0.6) 24px)'
-    }}
+    className={`w-full relative rounded-xl overflow-hidden group ${disabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-[0_0_35px_-5px_rgba(124,117,255,0.6)]"} ${className}`}
   >
-    <div className="bg-gradient-to-br from-[#1b1c38]/95 via-[#0d0f1a]/95 to-[#0b161f]/95 w-full h-full rounded-[10px] py-4 relative z-10 flex items-center justify-center font-bold text-white tracking-wide transition-all duration-500 overflow-hidden backdrop-blur-xl">
+    <div 
+      className="w-full h-full rounded-xl py-4 flex items-center justify-center font-bold text-white tracking-wide transition-all duration-500 relative z-10"
+      style={{
+        background: 'linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)'
+      }}
+    >
+      {/* Noise overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
       
+      {/* Inner subtle glow/shadow for 3D depth */}
+      <div className="absolute inset-0 rounded-xl shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-4px_10px_rgba(0,0,0,0.15)] pointer-events-none" />
+
       {/* Sweeping light effect on hover */}
-      <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1200ms] ease-in-out bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 pointer-events-none" />
+      <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1000ms] ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none" />
 
-      {/* Subtle pulsing glow inside */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#7c75ff]/0 via-[#7c75ff]/15 to-[#4ad4a0]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-      {/* Left pattern inset */}
-      <div 
-        className="absolute left-0 top-0 w-10 h-full border-r border-[#ffffff10] pointer-events-none opacity-70 group-hover:opacity-100 transition-all duration-500 bg-[#7c75ff]/5"
-        style={{
-          "--pattern-fg": "rgba(124, 117, 255, 0.4)",
-          backgroundImage: "repeating-linear-gradient(315deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
-          backgroundSize: "6px 6px"
-        }}
-      />
-      
-      {/* Right pattern inset */}
-      <div 
-        className="absolute right-0 top-0 w-10 h-full border-l border-[#ffffff10] pointer-events-none opacity-70 group-hover:opacity-100 transition-all duration-500 bg-[#2dd4a0]/5"
-        style={{
-          "--pattern-fg": "rgba(45, 212, 160, 0.4)",
-          backgroundImage: "repeating-linear-gradient(45deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
-          backgroundSize: "6px 6px"
-        }}
-      />
-
-      <div className="relative z-10 group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-500">
+      <div className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)]">
         {children}
       </div>
     </div>
