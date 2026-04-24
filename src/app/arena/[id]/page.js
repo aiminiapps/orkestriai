@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use, useMemo } from "react";
+import { useEffect, useState, use, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   RiCheckboxCircleLine,
@@ -11,91 +11,222 @@ import {
   RiMicroscopeLine,
   RiLineChartLine,
   RiShieldKeyholeLine,
+  RiShareLine,
+  RiCoinLine,
+  RiBarChartBoxLine,
+  RiPieChartLine,
+  RiExchangeDollarLine,
+  RiLayoutGridLine,
+  RiRoadMapLine,
+  RiCloseLine,
+  RiArrowUpLine,
+  RiArrowDownLine,
 } from "react-icons/ri";
 import Link from "next/link";
 import MarkdownRenderer from "@/components/ui/MarkdownRenderer";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { AGENT_MAP } from "@/lib/agents";
 
-// React Flow Libraries
-import { 
-  ReactFlow, 
-  ReactFlowProvider, 
-  Background, 
-  Controls, 
-  Handle, 
-  Position, 
-  useNodesState, 
-  useEdgesState, 
-  useReactFlow 
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+import {
+  ReactFlow,
+  ReactFlowProvider,
+  Background,
+  Controls,
+  Handle,
+  Position,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
 const AGENT_ICONS = {
-  research: <RiMicroscopeLine className="w-[20px] h-[20px]" />,
-  market: <RiLineChartLine className="w-[20px] h-[20px]" />,
-  risk: <RiShieldKeyholeLine className="w-[20px] h-[20px]" />
+  research: <RiMicroscopeLine className="w-[18px] h-[18px]" />,
+  market: <RiLineChartLine className="w-[18px] h-[18px]" />,
+  risk: <RiShieldKeyholeLine className="w-[18px] h-[18px]" />,
 };
 
-/* =========================================================================
-   1. LUXURY UI COMPONENTS
-   ========================================================================= */
+/* ═══════════════════════════════════════════════════════════════════════════
+   MARKET DATA FETCHER HOOK
+   ═══════════════════════════════════════════════════════════════════════════ */
+function useMarketData(token) {
+  const [market, setMarket] = useState(null);
 
-const LuxuryButton = ({ children, disabled, onClick, className = "" }) => (
-  <motion.button
-    onClick={onClick}
-    disabled={disabled}
-    whileHover={disabled ? {} : { scale: 1.02 }}
-    whileTap={disabled ? {} : { scale: 0.98 }}
-    transition={{ type: "spring", stiffness: 400, damping: 15 }}
-    className={`w-full relative rounded-xl overflow-hidden group ${disabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-[0_0_35px_-5px_rgba(124,117,255,0.6)]"} ${className}`}
-  >
-    <div 
-      className="w-full h-full rounded-xl py-3 flex items-center justify-center font-bold text-white tracking-wide transition-all duration-500 relative z-10"
-      style={{ background: 'linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)' }}
-    >
-      <div className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
-      <div className="absolute inset-0 rounded-xl shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-4px_10px_rgba(0,0,0,0.15)] pointer-events-none" />
-      <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1000ms] ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none" />
-      <div className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] flex items-center gap-2 text-sm">
-        {children}
-      </div>
-    </div>
-  </motion.button>
-);
+  useEffect(() => {
+    async function fetchMarket() {
+      try {
+        const searchRes = await fetch(
+          `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(token)}`
+        );
+        const searchData = await searchRes.json();
+        const coin = searchData.coins?.[0];
+        if (!coin) return;
 
-/* =========================================================================
-   2. CUSTOM FLOW NODES
-   ========================================================================= */
+        const detailRes = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${coin.id}?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=false`
+        );
+        const detail = await detailRes.json();
+        const md = detail.market_data;
+        if (md) {
+          setMarket({
+            name: detail.name,
+            symbol: detail.symbol?.toUpperCase(),
+            image: detail.image?.small,
+            price: md.current_price?.usd,
+            change24h: md.price_change_percentage_24h,
+            change7d: md.price_change_percentage_7d,
+            change30d: md.price_change_percentage_30d,
+            marketCap: md.market_cap?.usd,
+            volume: md.total_volume?.usd,
+            rank: detail.market_cap_rank,
+            ath: md.ath?.usd,
+            athChange: md.ath_change_percentage?.usd,
+            circulatingSupply: md.circulating_supply,
+            totalSupply: md.total_supply,
+            maxSupply: md.max_supply,
+          });
+        }
+      } catch {
+        /* silent */
+      }
+    }
+    fetchMarket();
+  }, [token]);
 
+  return market;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CANVAS CUSTOM NODE COMPONENTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const fmt = (n) =>
+  n != null
+    ? n >= 1e9
+      ? `$${(n / 1e9).toFixed(2)}B`
+      : n >= 1e6
+        ? `$${(n / 1e6).toFixed(2)}M`
+        : `$${n.toLocaleString()}`
+    : "—";
+const fmtSupply = (n) =>
+  n != null
+    ? n >= 1e9
+      ? `${(n / 1e9).toFixed(2)}B`
+      : n >= 1e6
+        ? `${(n / 1e6).toFixed(2)}M`
+        : n.toLocaleString()
+    : "—";
+
+/* ─── Hub Node (Central Request) ─── */
 const HubNode = ({ data }) => {
-  const { analysis } = data;
+  const { analysis, market } = data;
   return (
     <>
-      <div className="w-[420px] rounded-2xl p-[1px] relative overflow-hidden bg-[#7c75ff]/20 shadow-[0_0_80px_-15px_rgba(124,117,255,0.2)] pb-4">
-        <div className="bg-[#0b0c10] w-full h-full rounded-2xl p-7 relative z-10 pl-9">
-          <div 
-            className="absolute left-0 top-0 w-6 h-full border-r border-[var(--pattern-fg)] pointer-events-none"
-            style={{
-              "--pattern-fg": "rgba(124, 117, 255, 0.2)",
-              backgroundImage: "repeating-linear-gradient(315deg, var(--pattern-fg) 0, var(--pattern-fg) 1px, transparent 0, transparent 50%)",
-              backgroundSize: "10px 10px"
-            }}
-          />
-          <div className="pl-2 flex flex-col">
-            <div className="flex items-center gap-3 text-[11px] text-[#7c75ff] font-bold uppercase tracking-widest mb-4">
-              <RiSparklingLine className="text-lg" />
-              Intelligence Core Request
+      <div className="w-[440px] rounded-2xl relative overflow-hidden border border-[#7c75ff]/20 bg-[#0b0c10]">
+        {/* Crosshatch left strip */}
+        <div
+          className="absolute left-0 top-0 w-5 h-full border-r border-[#7c75ff]/15 pointer-events-none"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(315deg, rgba(124,117,255,0.12) 0, rgba(124,117,255,0.12) 1px, transparent 0, transparent 50%)",
+            backgroundSize: "8px 8px",
+          }}
+        />
+        <div className="pl-7 pr-6 py-6">
+          <div className="flex items-center gap-2 text-[10px] text-[#7c75ff] font-bold uppercase tracking-[0.2em] mb-4">
+            <RiSparklingLine className="text-sm" />
+            Intelligence Core
+          </div>
+
+          {/* Token + Price Row */}
+          <div className="flex items-end justify-between mb-3">
+            <div className="flex items-center gap-3">
+              {market?.image && (
+                <img src={market.image} alt="" className="w-9 h-9 rounded-full" />
+              )}
+              <div>
+                <h2 className="text-3xl font-extrabold text-white tracking-tight">
+                  {analysis.token}
+                </h2>
+                {market?.symbol && (
+                  <span className="text-[10px] font-mono text-white/25">
+                    {market.symbol}
+                    {market.rank ? ` · #${market.rank}` : ""}
+                  </span>
+                )}
+              </div>
             </div>
-            <h2 className="text-4xl font-extrabold mb-4 text-white tracking-tight break-words">
-              {analysis.token}
-            </h2>
-            <div className="text-white/60 text-[14px] leading-relaxed bg-white/[0.02] p-4 rounded-xl border border-white/[0.03] mb-5">
-              {analysis.question}
+            {market?.price != null && (
+              <div className="text-right">
+                <p className="text-xl font-bold font-mono text-white">
+                  ${market.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+                </p>
+                {market.change24h != null && (
+                  <p
+                    className={`text-[11px] font-mono flex items-center gap-0.5 justify-end ${market.change24h >= 0 ? "text-[#2dd4a0]" : "text-[#ff6b5b]"}`}
+                  >
+                    {market.change24h >= 0 ? (
+                      <RiArrowUpLine />
+                    ) : (
+                      <RiArrowDownLine />
+                    )}
+                    {Math.abs(market.change24h).toFixed(2)}% 24h
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Question */}
+          <div className="text-white/50 text-[13px] leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.04] mb-4 nodrag nowheel">
+            {analysis.question}
+          </div>
+
+          {/* Market mini-stats */}
+          {market && (
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="rounded-lg bg-white/[0.02] border border-white/[0.04] p-2.5">
+                <span className="text-[8px] text-white/20 uppercase tracking-widest block mb-0.5">
+                  Market Cap
+                </span>
+                <span className="text-[12px] font-mono font-bold text-white/80">
+                  {fmt(market.marketCap)}
+                </span>
+              </div>
+              <div className="rounded-lg bg-white/[0.02] border border-white/[0.04] p-2.5">
+                <span className="text-[8px] text-white/20 uppercase tracking-widest block mb-0.5">
+                  24h Vol
+                </span>
+                <span className="text-[12px] font-mono font-bold text-white/80">
+                  {fmt(market.volume)}
+                </span>
+              </div>
+              <div className="rounded-lg bg-white/[0.02] border border-white/[0.04] p-2.5">
+                <span className="text-[8px] text-white/20 uppercase tracking-widest block mb-0.5">
+                  7d
+                </span>
+                <span
+                  className={`text-[12px] font-mono font-bold ${market.change7d != null ? (market.change7d >= 0 ? "text-[#2dd4a0]" : "text-[#ff6b5b]") : "text-white/40"}`}
+                >
+                  {market.change7d != null
+                    ? `${market.change7d >= 0 ? "+" : ""}${market.change7d.toFixed(2)}%`
+                    : "—"}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2 text-[10px] font-mono text-[#4a9eff] uppercase tracking-wider">
-              <span className="px-3 py-1.5 rounded-md bg-[#4a9eff]/10 border border-[#4a9eff]/20">{analysis.category}</span>
-            </div>
+          )}
+
+          {/* Meta tags */}
+          <div className="flex flex-wrap gap-1.5">
+            <span className="text-[9px] font-mono text-[#4a9eff]/70 px-2.5 py-1 rounded-md bg-[#4a9eff]/8 border border-[#4a9eff]/15">
+              {analysis.category}
+            </span>
+            <span className="text-[9px] font-mono text-white/25 px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/[0.04]">
+              {analysis.language}
+            </span>
+            <span className="text-[9px] font-mono text-white/25 px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/[0.04]">
+              {analysis.style || "Detailed Report"}
+            </span>
           </div>
         </div>
       </div>
@@ -104,49 +235,131 @@ const HubNode = ({ data }) => {
   );
 };
 
+/* ─── Agent Node ─── */
 const AgentNode = ({ data }) => {
-  const { agentSlug, responseMs, isWinnerNode, voted, isLoser, onVote, voting } = data;
+  const {
+    agentSlug,
+    responseMs,
+    isWinnerNode,
+    voted,
+    isLoser,
+    onVote,
+    voting,
+    onOpenDetail,
+    wordCount,
+  } = data;
   const agent = AGENT_MAP[agentSlug];
 
   return (
     <>
       <Handle type="target" position={Position.Left} className="!opacity-0 !w-0" />
-      <div className={`w-[360px] transition-all duration-700 z-10 ${isWinnerNode ? 'scale-[1.03]' : isLoser ? 'opacity-40 grayscale-[40%]' : ''}`}>
-        <div className={`w-full rounded-2xl p-[1px] relative shadow-2xl transition-all duration-500 overflow-visible ${isWinnerNode ? 'bg-gradient-to-r from-[#f7c94b] to-[#f7c94b]/50 shadow-[0_0_60px_-10px_rgba(247,201,75,0.3)]' : 'bg-white/[0.04]'}`}>
-          <div className="w-full bg-[#0a0b12]/95 rounded-2xl p-6 flex flex-col backdrop-blur-2xl">
-            <div className="flex items-center gap-4 mb-5">
-              <div 
-                className="w-[44px] h-[44px] rounded-full flex items-center justify-center shadow-[0_0_20px_-5px_var(--glow)]"
+      <div
+        className={`w-[380px] transition-all duration-700 ${isWinnerNode ? "scale-[1.02]" : isLoser ? "opacity-40 grayscale-[30%]" : ""}`}
+      >
+        <div
+          className={`w-full rounded-2xl relative overflow-hidden transition-all duration-500 ${isWinnerNode ? "border-[#f7c94b]/40 bg-[#0a0b12]" : "border-white/[0.06] bg-[#0a0b12]"}`}
+          style={{ borderWidth: "1px", borderStyle: "solid" }}
+        >
+          {/* Winner glow bar */}
+          {isWinnerNode && (
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#f7c94b] to-transparent" />
+          )}
+
+          <div className="p-5">
+            {/* Agent identity */}
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center"
                 style={{
-                  '--glow': agent.avatarColor,
-                  background: `linear-gradient(135deg, ${agent.avatarColor}20, ${agent.avatarColor}05)`,
-                  border: `1px solid ${agent.avatarColor}40`,
-                  color: agent.avatarColor
+                  background: `linear-gradient(135deg, ${agent.avatarColor}18, ${agent.avatarColor}05)`,
+                  border: `1px solid ${agent.avatarColor}30`,
+                  color: agent.avatarColor,
                 }}
               >
                 {AGENT_ICONS[agentSlug]}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-[16px] text-white/95">{agent.name}</h3>
-                <p className="text-[10px] text-white/40 font-mono tracking-widest uppercase mt-0.5">{agent.type}</p>
+                <h3 className="font-bold text-[15px] text-white/90">{agent.name}</h3>
+                <p className="text-[9px] text-white/30 font-mono tracking-[0.15em] uppercase mt-0.5">
+                  {agent.type}
+                </p>
               </div>
-            </div>
-
-            <div className="pt-2">
-              {!voted ? (
-                <LuxuryButton onClick={onVote} disabled={voting}>
-                  {voting ? "Locking Pathway..." : <><RiCheckboxCircleLine className="text-lg" /> Select Agent Blueprint</>}
-                </LuxuryButton>
-              ) : isWinnerNode ? (
-                <div className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-[#f7c94b]/20 to-[#f7c94b]/5 border border-[#f7c94b]/30 text-[#f7c94b] text-[13px] font-bold shadow-[0_0_20px_-5px_rgba(247,201,75,0.3)] tracking-widest uppercase">
-                  <RiTrophyLine className="text-lg" /> Winning Protocol
-                </div>
-              ) : (
-                <div className="py-3 px-4 rounded-xl bg-white/[0.02] text-white/20 text-[12px] font-medium tracking-wide w-full text-center border border-white/[0.02] uppercase">
-                  Dormant Node
+              {isWinnerNode && voted && (
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#f7c94b]/10 border border-[#f7c94b]/25">
+                  <RiTrophyLine className="text-[#f7c94b] text-xs" />
+                  <span className="text-[9px] font-bold text-[#f7c94b] uppercase tracking-wider">
+                    Winner
+                  </span>
                 </div>
               )}
             </div>
+
+            {/* Stats row */}
+            <div className="flex items-center gap-3 mb-4">
+              {responseMs > 0 && (
+                <div className="flex items-center gap-1 text-[10px] font-mono text-white/25">
+                  <RiTimeLine />
+                  {(responseMs / 1000).toFixed(1)}s
+                </div>
+              )}
+              {wordCount > 0 && (
+                <div className="flex items-center gap-1 text-[10px] font-mono text-white/25">
+                  <RiBarChartBoxLine />
+                  {wordCount} words
+                </div>
+              )}
+            </div>
+
+            {/* Read Full Analysis button */}
+            <button
+              onClick={() => onOpenDetail(agentSlug)}
+              className="w-full py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 mb-3"
+              style={{
+                background: `linear-gradient(135deg, ${agent.avatarColor}10, ${agent.avatarColor}05)`,
+                border: `1px solid ${agent.avatarColor}20`,
+                color: agent.avatarColor,
+              }}
+            >
+              <RiSparklingLine />
+              Read Full Analysis
+            </button>
+
+            {/* Vote / Status */}
+            {!voted ? (
+              <button
+                onClick={onVote}
+                disabled={voting}
+                className={`w-full relative rounded-xl overflow-hidden group py-3 flex items-center justify-center font-bold text-white tracking-wide text-[12px] transition-all cursor-pointer ${voting ? "opacity-50 cursor-not-allowed" : ""}`}
+                style={{
+                  background: "linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)",
+                }}
+              >
+                {/* Sweep */}
+                <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1000ms] ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent -skew-x-12 pointer-events-none" />
+                <span className="relative z-10 flex items-center gap-2">
+                  {voting ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white/90 rounded-full animate-spin" />
+                      Locking...
+                    </>
+                  ) : (
+                    <>
+                      <RiCheckboxCircleLine className="text-sm" />
+                      Select as Best
+                    </>
+                  )}
+                </span>
+              </button>
+            ) : isWinnerNode ? (
+              <div className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#f7c94b]/8 border border-[#f7c94b]/25 text-[#f7c94b] text-[11px] font-bold tracking-[0.15em] uppercase">
+                <RiTrophyLine />
+                Winning Protocol
+              </div>
+            ) : (
+              <div className="py-3 rounded-xl bg-white/[0.02] text-white/15 text-[11px] font-medium tracking-wide w-full text-center border border-white/[0.02] uppercase">
+                Dormant
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -155,125 +368,216 @@ const AgentNode = ({ data }) => {
   );
 };
 
-const SectionNode = ({ data }) => {
+/* ─── Section Node (analysis content chunks) ─── */
+const SectionNode = ({ data }) => (
+  <>
+    <Handle type="target" position={Position.Left} className="!opacity-0 !w-0" />
+    <div
+      className={`w-[500px] h-[200px] rounded-xl overflow-hidden transition-all duration-500 ${data.isWinnerNode ? "border-[#f7c94b]/20 scale-[1.01]" : "border-white/[0.05]"} bg-[#0b0c12]`}
+      style={{ borderWidth: "1px", borderStyle: "solid" }}
+    >
+      <div className="w-full h-full p-5 flex flex-col relative">
+        <h4 className="text-[11px] font-bold text-[#7c75ff] mb-2.5 pb-2 border-b border-white/[0.04] tracking-[0.12em] uppercase flex items-center gap-1.5 shrink-0">
+          <RiSparklingLine className="text-sm" />
+          {data.title}
+        </h4>
+        <div className="premium-markdown flex-1 text-[12.5px] leading-[1.7] text-white/60 overflow-y-auto custom-scrollbar pr-2 nodrag nowheel font-light">
+          <MarkdownRenderer content={data.content} />
+        </div>
+      </div>
+    </div>
+    <Handle type="source" position={Position.Right} className="!opacity-0 !w-0" />
+  </>
+);
+
+/* ─── Supply Stats Node ─── */
+const StatsNode = ({ data }) => {
+  const { market } = data;
+  if (!market) return null;
   return (
     <>
       <Handle type="target" position={Position.Left} className="!opacity-0 !w-0" />
-      <div className={`w-[520px] h-[240px] rounded-2xl p-[1px] ${data.isWinnerNode ? 'bg-gradient-to-br from-[#f7c94b]/50 to-transparent shadow-[0_0_30px_-5px_rgba(247,201,75,0.15)] scale-[1.02]' : 'bg-gradient-to-br from-white/[0.1] to-transparent shadow-2xl hover:scale-[1.01]'} transition-all duration-500 overflow-hidden`}>
-        <div className="bg-[#0b0c13]/95 w-full h-full p-6 rounded-2xl border border-transparent flex flex-col backdrop-blur-3xl relative">
-          
-          <div className="absolute top-0 right-0 w-40 h-40 bg-[#7c75ff]/10 blur-[60px] pointer-events-none rounded-full" />
-          
-          <h4 className="text-[13px] font-extrabold text-[#7c75ff] mb-3 pb-3 border-b border-white/[0.05] tracking-widest uppercase flex items-center gap-2">
-            <RiSparklingLine className="text-lg" /> {data.title}
-          </h4>
-          
-          <div className="premium-markdown flex-1 text-[13.5px] leading-relaxed text-white/70 overflow-y-auto custom-scrollbar pr-3 nodrag nowheel font-light">
-            <MarkdownRenderer content={data.content} />
-          </div>
+      <div className="w-[300px] rounded-xl border border-white/[0.06] bg-[#0b0c12] p-5">
+        <div className="text-[10px] text-[#2dd4a0] font-bold uppercase tracking-[0.2em] mb-3 flex items-center gap-1.5">
+          <RiPieChartLine />
+          Supply Data
+        </div>
+        <div className="space-y-2.5">
+          {[
+            { label: "Circulating", value: fmtSupply(market.circulatingSupply) },
+            { label: "Total Supply", value: fmtSupply(market.totalSupply) },
+            { label: "Max Supply", value: fmtSupply(market.maxSupply) },
+            {
+              label: "ATH",
+              value: market.ath ? `$${market.ath.toLocaleString()}` : "—",
+            },
+            {
+              label: "From ATH",
+              value:
+                market.athChange != null
+                  ? `${market.athChange.toFixed(1)}%`
+                  : "—",
+              color:
+                market.athChange != null
+                  ? market.athChange >= 0
+                    ? "#2dd4a0"
+                    : "#ff6b5b"
+                  : undefined,
+            },
+            {
+              label: "30d Change",
+              value:
+                market.change30d != null
+                  ? `${market.change30d >= 0 ? "+" : ""}${market.change30d.toFixed(2)}%`
+                  : "—",
+              color:
+                market.change30d != null
+                  ? market.change30d >= 0
+                    ? "#2dd4a0"
+                    : "#ff6b5b"
+                  : undefined,
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center justify-between text-[11px]"
+            >
+              <span className="text-white/25 font-medium">{item.label}</span>
+              <span
+                className="font-mono font-semibold text-white/70"
+                style={{ color: item.color }}
+              >
+                {item.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
-      <Handle type="source" position={Position.Right} className="!opacity-0 !w-0" />
     </>
   );
 };
 
-/* =========================================================================
-   3. DATA PARSING & LAYOUT ALGORITHM
-   ========================================================================= */
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYOUT ALGORITHM
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-const parseMarkdownNodes = (markdownText) => {
-  const tokens = markdownText.split(/(?=^##\s)/gm);
+const parseMarkdownNodes = (mdText) => {
+  const tokens = mdText.split(/(?=^##\s)/gm);
   const sections = [];
-  
   tokens.forEach((token) => {
-    if (!token.startsWith('##')) {
-       if (token.trim().length > 0) {
-          sections.push({ title: 'Overview Context', content: token.trim() });
-       }
-       return;
+    if (!token.startsWith("##")) {
+      if (token.trim().length > 0)
+        sections.push({ title: "Overview", content: token.trim() });
+      return;
     }
-    const lines = token.split('\n');
-    const title = lines[0].replace('##', '').trim();
-    const content = lines.slice(1).join('\n').trim();
-    
-    if (content.length > 0) {
-       sections.push({ title, content });
-    }
+    const lines = token.split("\n");
+    const title = lines[0].replace("##", "").trim();
+    const content = lines.slice(1).join("\n").trim();
+    if (content.length > 0) sections.push({ title, content });
   });
   return sections;
 };
 
-const getLayoutedElements = (analysis, responses, winner, handleVote, voting, voted) => {
+const buildLayout = (analysis, responses, winner, handleVote, voting, voted, market, onOpenDetail) => {
   const nodes = [];
   const edges = [];
-  
-  // 1. Plot the Main Root Hub at Origin
-  nodes.push({ id: 'hub', type: 'hub', data: { analysis }, position: { x: 0, y: 0 } });
 
-  const START_Y = -1200;
-  const AGENT_GAP_Y = 1200; // Large vertical gap between agents
-  const AGENT_X = 650;      // Distance strictly to the right
-  
+  // 1. Hub node
+  nodes.push({
+    id: "hub",
+    type: "hub",
+    data: { analysis, market },
+    position: { x: 0, y: 0 },
+  });
+
+  // 2. Stats node (below hub)
+  if (market) {
+    nodes.push({
+      id: "stats",
+      type: "stats",
+      data: { market },
+      position: { x: 50, y: 380 },
+    });
+    edges.push({
+      id: "edge-hub-stats",
+      source: "hub",
+      target: "stats",
+      type: "smoothstep",
+      style: { stroke: "rgba(45,212,160,0.25)", strokeWidth: 1.5 },
+    });
+  }
+
+  const AGENT_X = 700;
+  const START_Y = -900;
+  const AGENT_GAP_Y = 900;
+
   responses.forEach((resp, i) => {
     const agentId = resp.agentSlug;
     const isWinnerNode = winner === agentId;
-    const agentY = START_Y + (i * AGENT_GAP_Y);
-    
-    // 2. Plot the Agent Nodes
+    const agentY = START_Y + i * AGENT_GAP_Y;
+    const wordCount = resp.content?.split(/\s+/).length || 0;
+
+    // 3. Agent node
     nodes.push({
       id: `agent-${agentId}`,
-      type: 'agent',
-      data: { agentSlug: agentId, responseMs: resp.responseMs, isWinnerNode, voted, isLoser: voted && !isWinnerNode, onVote: () => handleVote(agentId), voting: voting && (winner === agentId) },
-      position: { x: AGENT_X, y: agentY }
+      type: "agent",
+      data: {
+        agentSlug: agentId,
+        responseMs: resp.responseMs,
+        isWinnerNode,
+        voted,
+        isLoser: voted && !isWinnerNode,
+        onVote: () => handleVote(agentId),
+        voting: voting && winner === agentId,
+        onOpenDetail,
+        wordCount,
+      },
+      position: { x: AGENT_X, y: agentY },
     });
 
-    // 3. Connect Hub -> Agent
+    // 4. Hub -> Agent edge
     edges.push({
       id: `edge-hub-${agentId}`,
-      source: 'hub',
+      source: "hub",
       target: `agent-${agentId}`,
-      type: 'smoothstep',
+      type: "smoothstep",
       animated: isWinnerNode,
-      style: { stroke: isWinnerNode ? '#f7c94b' : 'rgba(124,117,255,0.4)', strokeWidth: isWinnerNode ? 4 : 2 },
+      style: {
+        stroke: isWinnerNode ? "#f7c94b" : `${AGENT_MAP[agentId]?.avatarColor || "#7c75ff"}50`,
+        strokeWidth: isWinnerNode ? 3 : 1.5,
+      },
     });
 
-    // 4. Plot Sections in a 2-Column Horizontal Grid Matrix
+    // 5. Section child nodes
     const sections = parseMarkdownNodes(resp.content);
-    
-    const SECTION_START_X = AGENT_X + 550;
-    const COL_GAP = 580; // horizontal distance between columns
-    const ROW_GAP = 280; // vertical height gap per row
-    
+    const SEC_X = AGENT_X + 560;
+    const COL_GAP = 550;
+    const ROW_GAP = 230;
     const totalRows = Math.ceil(sections.length / 2);
-    const gridHeight = totalRows * ROW_GAP;
-    // Align grid center exactly with the Agent's Y axis
-    const startSecY = agentY - (gridHeight / 2) + (ROW_GAP / 2);
+    const startSecY = agentY - (totalRows * ROW_GAP) / 2 + ROW_GAP / 2;
 
     sections.forEach((sec, idx) => {
-      const secId = `section-${agentId}-${idx}`;
-      const col = idx % 2; // Col 0 or Col 1
+      const secId = `sec-${agentId}-${idx}`;
+      const col = idx % 2;
       const row = Math.floor(idx / 2);
-      
-      const secX = SECTION_START_X + (col * COL_GAP);
-      const secY = startSecY + (row * ROW_GAP);
-      
       nodes.push({
         id: secId,
-        type: 'section',
+        type: "section",
         data: { title: sec.title, content: sec.content, isWinnerNode },
-        position: { x: secX, y: secY }
+        position: { x: SEC_X + col * COL_GAP, y: startSecY + row * ROW_GAP },
       });
-      
-      // Edge from Agent -> Multi-Sections 
-      // Using smoothstep keeps connections mathematically clean when dodging columns
       edges.push({
         id: `edge-${agentId}-${secId}`,
         source: `agent-${agentId}`,
         target: secId,
-        type: 'smoothstep',
+        type: "smoothstep",
         animated: isWinnerNode,
-        style: { stroke: isWinnerNode ? 'rgba(247,201,75,0.4)' : 'rgba(255,255,255,0.08)', strokeWidth: 2 },
+        style: {
+          stroke: isWinnerNode
+            ? "rgba(247,201,75,0.3)"
+            : "rgba(255,255,255,0.04)",
+          strokeWidth: 1.5,
+        },
       });
     });
   });
@@ -281,29 +585,44 @@ const getLayoutedElements = (analysis, responses, winner, handleVote, voting, vo
   return { nodes, edges };
 };
 
-/* =========================================================================
-   4. CONTENT FLOW MAP CANVAS COMPONENT
-   ========================================================================= */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CANVAS COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-const FlowMapCanvas = ({ analysis, responses, winner, handleVote, voting, voted }) => {
+const FlowMapCanvas = ({
+  analysis,
+  responses,
+  winner,
+  handleVote,
+  voting,
+  voted,
+  market,
+  onOpenDetail,
+}) => {
   const { fitView } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const nodeTypes = useMemo(() => ({ hub: HubNode, agent: AgentNode, section: SectionNode }), []);
+  const nodeTypes = useMemo(
+    () => ({ hub: HubNode, agent: AgentNode, section: SectionNode, stats: StatsNode }),
+    []
+  );
 
   useEffect(() => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(analysis, responses, winner, handleVote, voting, voted);
-    
-    setNodes(layoutedNodes);
-    setEdges(layoutedEdges);
-
-    // Zoom and pan gracefully to frame the layout on load
-    setTimeout(() => {
-      fitView({ padding: 0.1, duration: 1500 });
-    }, 100);
-    
-  }, [analysis, responses, winner, voted, voting, handleVote, setNodes, setEdges, fitView]);
+    const { nodes: n, edges: e } = buildLayout(
+      analysis,
+      responses,
+      winner,
+      handleVote,
+      voting,
+      voted,
+      market,
+      onOpenDetail
+    );
+    setNodes(n);
+    setEdges(e);
+    setTimeout(() => fitView({ padding: 0.12, duration: 1200 }), 100);
+  }, [analysis, responses, winner, voted, voting, handleVote, market, onOpenDetail, setNodes, setEdges, fitView]);
 
   return (
     <ReactFlow
@@ -314,22 +633,209 @@ const FlowMapCanvas = ({ analysis, responses, winner, handleVote, voting, voted 
       nodeTypes={nodeTypes}
       proOptions={{ hideAttribution: true }}
       fitView
-      minZoom={0.05}
-      maxZoom={1.2}
-      className="bg-[#050608]"
+      minZoom={0.03}
+      maxZoom={1.5}
+      className="bg-[#060710]"
     >
-      <Background color="rgba(255,255,255,0.03)" size={1} gap={40} />
-      <Controls 
-        className="!bg-[#0b0c10] !border !border-white/5 !fill-white !rounded-xl !shadow-2xl overflow-hidden [&>button]:!bg-[#0a0b12] hover:[&>button]:!bg-white/10 [&>button]:!border-white/5" 
+      <Background color="rgba(255,255,255,0.02)" size={1} gap={50} />
+      <Controls
+        className="!bg-[#0b0c10] !border !border-white/5 !fill-white !rounded-xl overflow-hidden [&>button]:!bg-[#0a0b12] hover:[&>button]:!bg-white/10 [&>button]:!border-white/5"
         showInteractive={false}
       />
     </ReactFlow>
   );
 };
 
-/* =========================================================================
-   5. PAGE WRAPPER & LOGIC
-   ========================================================================= */
+/* ═══════════════════════════════════════════════════════════════════════════
+   DETAIL PANEL (Slide-over for full reading)
+   ═══════════════════════════════════════════════════════════════════════════ */
+const DetailPanel = ({ agentSlug, responses, onClose }) => {
+  const response = responses.find((r) => r.agentSlug === agentSlug);
+  const agent = AGENT_MAP[agentSlug];
+  if (!response || !agent) return null;
+
+  return (
+    <motion.div
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      className="fixed top-0 right-0 w-full sm:w-[520px] h-full z-[100] bg-[#0a0b12] border-l border-white/[0.06] flex flex-col"
+    >
+      {/* Panel header */}
+      <div className="flex items-center gap-3 p-5 border-b border-white/[0.06] shrink-0">
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center"
+          style={{
+            background: `linear-gradient(135deg, ${agent.avatarColor}15, ${agent.avatarColor}05)`,
+            border: `1px solid ${agent.avatarColor}30`,
+            color: agent.avatarColor,
+          }}
+        >
+          {AGENT_ICONS[agentSlug]}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-sm">{agent.name}</h3>
+          <p className="text-[9px] text-white/30 font-mono uppercase tracking-[0.15em]">
+            {agent.type} · {response.content?.split(/\s+/).length || 0} words ·{" "}
+            {(response.responseMs / 1000).toFixed(1)}s
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-white/[0.08] transition-colors cursor-pointer"
+        >
+          <RiCloseLine className="text-lg" />
+        </button>
+      </div>
+
+      {/* Panel body */}
+      <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
+        <MarkdownRenderer content={response.content} />
+      </div>
+    </motion.div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE CARD VIEW (for small screens)
+   ═══════════════════════════════════════════════════════════════════════════ */
+const MobileCardView = ({ analysis, responses, winner, handleVote, voting, voted, market }) => {
+  const [expanded, setExpanded] = useState(null);
+
+  return (
+    <div className="p-4 pb-24 space-y-4">
+      {/* Token info */}
+      <div className="rounded-2xl bg-[#0b0c12] border border-white/[0.06] p-5">
+        <div className="flex items-center gap-3 mb-3">
+          {market?.image && (
+            <img src={market.image} alt="" className="w-8 h-8 rounded-full" />
+          )}
+          <div className="flex-1">
+            <h2 className="text-xl font-bold">{analysis.token}</h2>
+            {market?.symbol && (
+              <span className="text-[10px] font-mono text-white/25">
+                {market.symbol}{market.rank ? ` · #${market.rank}` : ""}
+              </span>
+            )}
+          </div>
+          {market?.price != null && (
+            <div className="text-right">
+              <p className="text-sm font-bold font-mono">
+                ${market.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+              </p>
+              {market.change24h != null && (
+                <p className={`text-[10px] font-mono ${market.change24h >= 0 ? "text-[#2dd4a0]" : "text-[#ff6b5b]"}`}>
+                  {market.change24h >= 0 ? "+" : ""}{market.change24h.toFixed(2)}%
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+        <p className="text-xs text-white/35 leading-relaxed">{analysis.question}</p>
+      </div>
+
+      {/* Winner banner */}
+      {voted && winner && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#f7c94b]/5 border border-[#f7c94b]/15">
+          <RiTrophyLine className="text-[#f7c94b]" />
+          <span className="text-xs font-medium text-[#f7c94b]">
+            {AGENT_MAP[winner]?.name} won
+          </span>
+        </div>
+      )}
+
+      {/* Agent cards */}
+      {responses.map((resp, i) => {
+        const agent = AGENT_MAP[resp.agentSlug];
+        if (!agent) return null;
+        const isWin = winner === resp.agentSlug;
+        const isExp = expanded === resp.agentSlug;
+
+        return (
+          <div
+            key={resp.agentSlug}
+            className={`rounded-2xl border overflow-hidden transition-all ${isWin && voted ? "border-[#f7c94b]/30" : voted && !isWin ? "border-white/[0.04] opacity-50" : "border-white/[0.06]"} bg-[#0b0c12]`}
+          >
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center"
+                  style={{
+                    background: `linear-gradient(135deg, ${agent.avatarColor}15, ${agent.avatarColor}05)`,
+                    border: `1px solid ${agent.avatarColor}30`,
+                    color: agent.avatarColor,
+                  }}
+                >
+                  {AGENT_ICONS[resp.agentSlug]}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">{agent.name}</p>
+                  <p className="text-[9px] text-white/25 font-mono uppercase">
+                    {agent.type}
+                  </p>
+                </div>
+                {isWin && voted && (
+                  <span className="text-[9px] text-[#f7c94b] bg-[#f7c94b]/10 px-2 py-0.5 rounded flex items-center gap-1">
+                    <RiTrophyLine /> Winner
+                  </span>
+                )}
+              </div>
+
+              {!voted && (
+                <button
+                  onClick={() => handleVote(resp.agentSlug)}
+                  disabled={voting}
+                  className="w-full py-2.5 rounded-xl text-[11px] font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 mb-2"
+                  style={{
+                    background: `linear-gradient(135deg, ${agent.avatarColor}12, ${agent.avatarColor}06)`,
+                    border: `1px solid ${agent.avatarColor}20`,
+                    color: agent.avatarColor,
+                  }}
+                >
+                  <RiCheckboxCircleLine />
+                  Select as Best
+                </button>
+              )}
+            </div>
+
+            <div className="border-t border-white/[0.04]">
+              <button
+                onClick={() => setExpanded(isExp ? null : resp.agentSlug)}
+                className="w-full flex items-center justify-between px-4 py-2.5 text-[10px] text-white/35 hover:text-white/50 transition-colors cursor-pointer uppercase tracking-wider"
+              >
+                <span className="flex items-center gap-1">
+                  <RiSparklingLine style={{ color: agent.avatarColor }} />
+                  {isExp ? "Collapse" : "View Analysis"}
+                </span>
+                <RiArrowDownLine className={`transition-transform ${isExp ? "rotate-180" : ""}`} />
+              </button>
+              <AnimatePresence>
+                {isExp && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 pb-4 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                      <MarkdownRenderer content={resp.content} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function InfiniteComparisonPage({ params }) {
   const { id } = use(params);
@@ -339,6 +845,10 @@ export default function InfiniteComparisonPage({ params }) {
   const [winner, setWinner] = useState(null);
   const [voting, setVoting] = useState(false);
   const [voted, setVoted] = useState(false);
+  const [viewMode, setViewMode] = useState("canvas"); // "canvas" | "cards"
+  const [detailAgent, setDetailAgent] = useState(null);
+
+  const market = useMarketData(analysis?.token);
 
   useEffect(() => {
     async function fetchAnalysis() {
@@ -363,35 +873,58 @@ export default function InfiniteComparisonPage({ params }) {
     fetchAnalysis();
   }, [id]);
 
-  const handleVote = async (agentSlug) => {
-    if (voted || voting) return;
-    setWinner(agentSlug);
-    setVoting(true);
-    try {
-      const res = await fetch("/api/vote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analysisId: id, winnerAgentSlug: agentSlug }),
-      });
-      if (res.ok) {
-        setVoted(true);
-      } else {
+  // Auto-detect mobile for default view
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setViewMode("cards");
+    }
+  }, []);
+
+  const handleVote = useCallback(
+    async (agentSlug) => {
+      if (voted || voting) return;
+      setWinner(agentSlug);
+      setVoting(true);
+      try {
+        const res = await fetch("/api/vote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ analysisId: id, winnerAgentSlug: agentSlug }),
+        });
+        if (res.ok) setVoted(true);
+        else setWinner(null);
+      } catch {
         setWinner(null);
+      } finally {
+        setVoting(false);
       }
-    } catch (err) {
-      console.error("Vote failed:", err);
-      setWinner(null);
-    } finally {
-      setVoting(false);
+    },
+    [id, voted, voting]
+  );
+
+  const handleOpenDetail = useCallback((agentSlug) => {
+    setDetailAgent(agentSlug);
+  }, []);
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Orkestri AI — ${analysis?.token}`,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
     }
   };
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-[#0a0b12] flex items-center justify-center">
+      <div className="fixed inset-0 bg-[#060710] flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="lg" className="mx-auto mb-4" />
-          <p className="text-white/40 text-sm font-mono tracking-widest uppercase">Connecting to Database...</p>
+          <p className="text-white/25 text-xs font-mono tracking-[0.2em] uppercase">
+            Connecting to Intelligence Core...
+          </p>
         </div>
       </div>
     );
@@ -399,12 +932,15 @@ export default function InfiniteComparisonPage({ params }) {
 
   if (!analysis) {
     return (
-      <div className="fixed inset-0 bg-[#0a0b12] flex items-center justify-center">
-        <div className="max-w-md text-center p-8 bg-white/5 rounded-3xl border border-white/10">
-          <p className="text-white/80 font-bold text-xl mb-2">Node Missing</p>
-          <p className="text-white/50 mb-6">The requested analysis sector could not be located in the matrix.</p>
-          <Link href="/arena" className="inline-block w-full">
-             <div className="px-6 py-3 bg-white/10 rounded-xl text-white">Return Home</div>
+      <div className="fixed inset-0 bg-[#060710] flex items-center justify-center">
+        <div className="text-center p-8 bg-[#0b0c12] rounded-2xl border border-white/[0.06] max-w-sm">
+          <p className="text-white/50 mb-4 text-sm">Analysis not found</p>
+          <Link
+            href="/arena"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white/50 text-sm"
+          >
+            <RiArrowLeftLine />
+            Back to Arena
           </Link>
         </div>
       </div>
@@ -412,90 +948,158 @@ export default function InfiniteComparisonPage({ params }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#050608] w-screen h-screen overflow-hidden">
+    <div className="fixed inset-0 bg-[#060710] w-screen h-screen overflow-hidden">
+      {/* Global CSS */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
+          width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
-          border-radius: 10px;
+          background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.08);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(124, 117, 255, 0.4);
+          background: rgba(124, 117, 255, 0.3);
         }
-        /* Prevents standard text scrolling from scrolling the canvas */
         .react-flow__node {
           cursor: default;
         }
-        
-        /* Premium Highlights for Sub Node Markdown Data */
         .premium-markdown .prose strong {
           color: #fff;
-          font-weight: 700;
-          background: rgba(124,117,255,0.15);
-          padding: 2px 6px;
-          border-radius: 6px;
-          border: 1px solid rgba(124,117,255,0.3);
-          box-shadow: 0 0 10px rgba(124,117,255,0.1);
+          font-weight: 600;
+          background: rgba(124, 117, 255, 0.1);
+          padding: 1px 5px;
+          border-radius: 4px;
         }
         .premium-markdown .prose ul > li::marker {
           color: #2dd4a0;
         }
         .premium-markdown .prose p {
-          margin-bottom: 0.6em;
+          margin-bottom: 0.5em;
         }
       `}</style>
 
-      {/* Static Nav HUD Layer */}
-      <div className="absolute top-0 left-0 right-0 p-6 sm:p-8 z-50 pointer-events-none flex justify-between items-start">
+      {/* ── Floating HUD ── */}
+      <div className="absolute top-0 left-0 right-0 p-4 sm:p-5 z-50 pointer-events-none flex justify-between items-start">
+        {/* Left: Back */}
         <div className="pointer-events-auto">
-          <Link href="/arena" className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-[#0a0b12]/90 backdrop-blur-3xl border border-white/5 text-white/60 hover:text-white hover:bg-white/10 transition-all shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] group font-mono text-[11px] uppercase tracking-widest font-bold">
-            <RiArrowLeftLine className="group-hover:-translate-x-1 transition-transform" /> Exit Map Workspace
+          <Link
+            href="/arena"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0a0b12]/90 backdrop-blur-2xl border border-white/[0.06] text-white/40 hover:text-white/70 transition-all text-[10px] font-mono uppercase tracking-[0.15em] font-semibold"
+          >
+            <RiArrowLeftLine />
+            Arena
           </Link>
         </div>
-        
-        <div className="flex flex-col items-end gap-3 pointer-events-auto">
-          <div className="px-5 py-3 rounded-2xl bg-[#0a0b12]/90 backdrop-blur-3xl border border-[#7c75ff]/20 text-[#7c75ff] shadow-[0_10px_40px_-10px_rgba(124,117,255,0.15)] flex items-center gap-2">
-            <RiCheckboxCircleLine className="text-xl" />
-            <span className="text-[11px] font-bold tracking-widest uppercase">Content Flow Online</span>
-          </div>
 
-          <AnimatePresence>
-            {voted && winner && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-              >
-                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-[#f7c94b]/10 backdrop-blur-2xl border border-[#f7c94b]/30 shadow-[0_0_30px_-5px_rgba(247,201,75,0.2)]">
-                  <RiTrophyLine className="text-[#f7c94b] text-xl" />
-                  <span className="text-[11px] font-bold text-[#f7c94b] uppercase tracking-widest">
-                    {AGENT_MAP[winner]?.name} Active
-                  </span>
-                </div>
-              </motion.div>
+        {/* Right: Status + Actions */}
+        <div className="flex items-center gap-2 pointer-events-auto">
+          {/* View toggle */}
+          <button
+            onClick={() =>
+              setViewMode(viewMode === "canvas" ? "cards" : "canvas")
+            }
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#0a0b12]/90 backdrop-blur-2xl border border-white/[0.06] text-white/40 hover:text-white/70 transition-all text-[10px] font-mono uppercase tracking-[0.12em] cursor-pointer"
+          >
+            {viewMode === "canvas" ? (
+              <>
+                <RiLayoutGridLine />
+                Cards
+              </>
+            ) : (
+              <>
+                <RiRoadMapLine />
+                Canvas
+              </>
             )}
-          </AnimatePresence>
+          </button>
+
+          {/* Share */}
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#0a0b12]/90 backdrop-blur-2xl border border-white/[0.06] text-white/40 hover:text-white/70 transition-all text-[10px] font-mono uppercase tracking-[0.12em] cursor-pointer"
+          >
+            <RiShareLine />
+            Share
+          </button>
+
+          {/* Status */}
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#0a0b12]/90 backdrop-blur-2xl border border-[#7c75ff]/20 text-[#7c75ff] text-[10px] font-bold tracking-[0.15em] uppercase">
+            <RiCheckboxCircleLine />
+            Online
+          </div>
         </div>
       </div>
 
-      {/* Render The Immersive Map */}
-      <ReactFlowProvider>
-        <FlowMapCanvas
-          analysis={analysis}
-          responses={responses}
-          winner={winner}
-          handleVote={handleVote}
-          voting={voting}
-          voted={voted}
-        />
-      </ReactFlowProvider>
+      {/* Winner HUD (bottom-left) */}
+      <AnimatePresence>
+        {voted && winner && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-5 left-5 z-50 pointer-events-auto"
+          >
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0a0b12]/90 backdrop-blur-2xl border border-[#f7c94b]/25">
+              <RiTrophyLine className="text-[#f7c94b]" />
+              <span className="text-[10px] font-bold text-[#f7c94b] uppercase tracking-[0.15em]">
+                {AGENT_MAP[winner]?.name}
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
+      {/* ── Main Content ── */}
+      {viewMode === "canvas" ? (
+        <ReactFlowProvider>
+          <FlowMapCanvas
+            analysis={analysis}
+            responses={responses}
+            winner={winner}
+            handleVote={handleVote}
+            voting={voting}
+            voted={voted}
+            market={market}
+            onOpenDetail={handleOpenDetail}
+          />
+        </ReactFlowProvider>
+      ) : (
+        <div className="w-full h-full overflow-y-auto pt-16">
+          <MobileCardView
+            analysis={analysis}
+            responses={responses}
+            winner={winner}
+            handleVote={handleVote}
+            voting={voting}
+            voted={voted}
+            market={market}
+          />
+        </div>
+      )}
+
+      {/* ── Detail Panel (slide-over) ── */}
+      <AnimatePresence>
+        {detailAgent && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDetailAgent(null)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99]"
+            />
+            <DetailPanel
+              agentSlug={detailAgent}
+              responses={responses}
+              onClose={() => setDetailAgent(null)}
+            />
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

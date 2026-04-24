@@ -1,4 +1,5 @@
 import { Space_Grotesk, DM_Mono } from "next/font/google";
+import WalletProvider from "@/components/providers/WalletProvider";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -43,7 +44,7 @@ export default function RootLayout({ children }) {
       className={`${spaceGrotesk.variable} ${dmMono.variable} dark`}
     >
       <body className="min-h-screen bg-gradient-animated">
-        {children}
+        <WalletProvider>{children}</WalletProvider>
       </body>
     </html>
   );

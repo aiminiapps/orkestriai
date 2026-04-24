@@ -16,6 +16,7 @@ import {
   RiSparklingLine
 } from "react-icons/ri";
 import AppShell from "@/components/layout/AppShell";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { AGENTS, CATEGORIES, LANGUAGES, STYLES } from "@/lib/agents";
 import useAnalysisStore from "@/stores/useAnalysisStore";
 
@@ -110,6 +111,7 @@ const fadeUp = {
 export default function ArenaPage() {
   const router = useRouter();
   const { input, setInput, resetAnalysis } = useAnalysisStore();
+  const { address } = useAppKitAccount();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -196,7 +198,7 @@ export default function ArenaPage() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify({ ...input, walletAddress: address || null }),
       });
 
       if (!res.ok) {
