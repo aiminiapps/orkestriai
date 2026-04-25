@@ -1,7 +1,6 @@
 "use client";
 
 import Navbar from "./Navbar";
-import MobileNav from "./MobileNav";
 
 export default function AppShell({ children }) {
   return (
@@ -14,12 +13,9 @@ export default function AppShell({ children }) {
       <Navbar />
 
       {/* Main content */}
-      <main className="pt-16 pb-20 md:pb-8">
+      <main className="pt-24 pb-8 min-h-screen">
         {children}
       </main>
-
-      {/* Mobile bottom nav */}
-      <MobileNav />
     </div> 
   );
 }
