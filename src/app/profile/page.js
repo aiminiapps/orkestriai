@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import {
@@ -15,7 +15,6 @@ import {
   RiSwordLine,
   RiCheckboxCircleLine,
   RiArrowLeftRightLine,
-  RiTimeLine,
   RiSparklingLine,
 } from "react-icons/ri";
 import Link from "next/link";
@@ -23,72 +22,24 @@ import AppShell from "@/components/layout/AppShell";
 
 /* ─── Seed-Based Avatar Generator ─── */
 function SeedAvatar({ address, size = 80 }) {
-  const colors = useMemo(() => {
-    if (!address) return ["#7c75ff", "#4a9eff", "#2dd4a0", "#f7c94b"];
-    const seed = address.toLowerCase();
-    const palette = [];
-    for (let i = 0; i < 4; i++) {
-      const slice = seed.slice(2 + i * 8, 10 + i * 8);
-      const hue = parseInt(slice, 16) % 360;
-      palette.push(`hsl(${hue}, 70%, 60%)`);
-    }
-    return palette;
-  }, [address]);
-
-  const shapes = useMemo(() => {
-    if (!address) return [];
-    const seed = address.toLowerCase();
-    const items = [];
-    for (let i = 0; i < 6; i++) {
-      const hex = seed.slice(2 + i * 6, 8 + i * 6);
-      const val = parseInt(hex, 16);
-      items.push({
-        x: (val % 80) + 10,
-        y: ((val >> 8) % 80) + 10,
-        r: (val % 15) + 8,
-        color: colors[val % colors.length],
-        opacity: 0.3 + (val % 50) / 100,
-      });
-    }
-    return items;
-  }, [address, colors]);
+  const seed = address || "default";
+  
+  // Using the Micah collection from DiceBear for a beautiful, premium, realistic human character
+  const avatarUrl = `https://api.dicebear.com/9.x/micah/svg?seed=${seed}&backgroundColor=transparent`;
 
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 100 100"
-      className="rounded-2xl"
-      style={{ background: `linear-gradient(135deg, ${colors[0]}20, ${colors[1]}10)` }}
+    <div 
+      className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#7c75ff]/20 to-[#4a9eff]/10 border border-[#7c75ff]/20 flex-shrink-0"
+      style={{ width: size, height: size }}
     >
-      {shapes.map((s, i) => (
-        <circle
-          key={i}
-          cx={s.x}
-          cy={s.y}
-          r={s.r}
-          fill={s.color}
-          opacity={s.opacity}
-        />
-      ))}
-      {/* Center ring */}
-      <circle
-        cx="50"
-        cy="50"
-        r="20"
-        fill="none"
-        stroke={colors[0]}
-        strokeWidth="1.5"
-        opacity="0.4"
+      <img
+        src={avatarUrl}
+        alt="Avatar"
+        width={size}
+        height={size}
+        className="w-full h-full object-cover scale-[1.1] translate-y-1"
       />
-      <circle
-        cx="50"
-        cy="50"
-        r="12"
-        fill={colors[0]}
-        opacity="0.25"
-      />
-    </svg>
+    </div>
   );
 }
 
@@ -244,10 +195,7 @@ export default function ProfilePage() {
             custom={0}
             className="rounded-2xl bg-[#0b0c12] border border-white/[0.06] overflow-hidden mb-6"
           >
-            {/* Top gradient bar */}
-            <div className="h-1 bg-gradient-to-r from-[#7c75ff] via-[#4a9eff] to-[#2dd4a0]" />
-
-            <div className="p-6 sm:p-8">
+            <div className="p-6">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                 {/* Seed Avatar */}
                 <SeedAvatar address={address} size={72} />
