@@ -202,10 +202,11 @@
 
   /* Gradient text */
   .text-gradient {
-    background: linear-gradient(135deg, #7c75ff 0%, #4a9eff 50%, #2dd4a0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    /* background: linear-gradient(135deg, #7c75ff 0%, #4a9eff 50%, #2dd4a0 100%); */
+    color: #7c75ff;
+    /* -webkit-background-clip: text; */
+    /* -webkit-text-fill-color: transparent; */
+    /* background-clip: text; */
   }
 
   .text-gradient-gold {
