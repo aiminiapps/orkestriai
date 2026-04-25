@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import MarkdownRenderer from "@/components/ui/MarkdownRenderer";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { AGENT_MAP } from "@/lib/agents";
 
 import {
@@ -835,6 +836,7 @@ const MobileCardView = ({ analysis, responses, winner, handleVote, voting, voted
 
 export default function InfiniteComparisonPage({ params }) {
   const { id } = use(params);
+  const { address } = useAppKitAccount();
   const [analysis, setAnalysis] = useState(null);
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -885,7 +887,7 @@ export default function InfiniteComparisonPage({ params }) {
         const res = await fetch("/api/vote", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ analysisId: id, winnerAgentSlug: agentSlug }),
+          body: JSON.stringify({ analysisId: id, winnerAgentSlug: agentSlug, walletAddress: address || null }),
         });
         if (res.ok) setVoted(true);
         else setWinner(null);

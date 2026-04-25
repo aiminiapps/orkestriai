@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { AGENTS } from "@/lib/agents";
+import { awardOKAI } from "@/lib/rewards";
 
 export async function POST(request) {
   try {
@@ -169,9 +170,16 @@ Please provide your ${agent.type.toLowerCase()} analysis.`;
 
     await Promise.all(agentPromises);
 
+    // Award OKAI for analysis
+    let reward = null;
+    if (walletAddress) {
+      reward = await awardOKAI(walletAddress, "analysis", analysis.id);
+    }
+
     return Response.json({
       analysisId: analysis.id,
       message: "Analysis complete",
+      reward,
     });
   } catch (error) {
     console.error("Analysis error:", error);

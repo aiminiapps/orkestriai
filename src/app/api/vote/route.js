@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/prisma";
+import { awardOKAI } from "@/lib/rewards";
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { analysisId, winnerAgentSlug } = body;
+    const { analysisId, winnerAgentSlug, walletAddress } = body;
 
     if (!analysisId || !winnerAgentSlug) {
       return Response.json(
@@ -93,7 +94,13 @@ export async function POST(request) {
       });
     }
 
-    return Response.json({ success: true, winner: winnerAgentSlug });
+    // Award OKAI for voting
+    let reward = null;
+    if (walletAddress) {
+      reward = await awardOKAI(walletAddress, "vote", analysisId);
+    }
+
+    return Response.json({ success: true, winner: winnerAgentSlug, reward });
   } catch (error) {
     console.error("Vote error:", error);
     return Response.json({ error: "Failed to save vote" }, { status: 500 });

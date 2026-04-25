@@ -77,3 +77,31 @@ model AgentResponse {
   @@index([isWinner])
   @@map("agent_responses")
 }
+
+model UserReward {
+  id            String   @id @default(cuid())
+  walletAddress String   @unique
+  okaiBalance   Int      @default(0)
+  totalEarned   Int      @default(0)
+  analysisCount Int      @default(0)
+  voteCount     Int      @default(0)
+  compareCount  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([walletAddress])
+  @@map("user_rewards")
+}
+
+model RewardLog {
+  id            String   @id @default(cuid())
+  walletAddress String
+  action        String   // "analysis" | "vote" | "compare"
+  amount        Int
+  referenceId   String?  // analysisId or compareId
+  createdAt     DateTime @default(now())
+
+  @@index([walletAddress])
+  @@index([createdAt])
+  @@map("reward_logs")
+}
