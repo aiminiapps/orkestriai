@@ -171,10 +171,6 @@ export default function HowItWorksSection() {
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
                 >
-                  {/* Decorative tiny tech corners */}
-                  <div className="absolute top-2 left-2 w-1 h-1 rounded-full bg-white/40" />
-                  <div className="absolute bottom-2 right-2 w-1 h-1 rounded-full bg-white/40" />
-                  
                   <step.icon className="text-4xl drop-shadow-md" style={{ color: step.color }} />
                   {/* Internal glossy highlight */}
                   <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-40 mix-blend-overlay pointer-events-none" />
