@@ -135,8 +135,8 @@ export default function AboutSection() {
               >
                 {/* Custom Dot Pattern and Glow Gradients */}
                 <defs>
-                  <pattern id="dotPattern" x="0" y="0" width="3" height="3" patternUnits="userSpaceOnUse">
-                    <circle cx="1.5" cy="1.5" r="1.2" fill="#ffffff" opacity="0.2" />
+                  <pattern id="dotPattern" x="0" y="0" width="7" height="7" patternUnits="userSpaceOnUse">
+                    <circle cx="3.5" cy="3.5" r="1.5" fill="#5F718B" opacity="0.4" />
                   </pattern>
                   <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#7c75ff" stopOpacity="0" />
@@ -194,14 +194,24 @@ export default function AboutSection() {
                   </g>
                 ))}
 
-                {/* Active Hub Markers */}
+                {/* Active Hub Markers Matching Reference */}
                 {markers.map(({ name, coordinates, color }) => (
                   <Marker key={name} coordinates={coordinates}>
-                    {/* Glowing outer ring */}
-                    <circle r={8} fill={color} opacity="0.2" className="animate-ping" style={{ animationDuration: "3s" }} />
-                    <circle r={4} fill={color} opacity="0.4" />
-                    {/* Solid inner core */}
-                    <circle r={2} fill="#ffffff" />
+                    {/* Shadow Pill Backdrop for Label */}
+                    <rect x="0" y="-12" width="65" height="24" rx="12" fill="#000000" opacity="0.6" />
+                    
+                    {/* The Badge Text */}
+                    <text x="24" y="3" fontSize={11} fill="#e2e8f0" fontWeight={500} style={{ pointerEvents: "none" }}>
+                      {name === "San Francisco" ? "SF" : name}
+                    </text>
+
+                    {/* Outer Ping Ring */}
+                    <circle r={10} fill="none" stroke="#e85d04" strokeWidth="1" className="animate-ping" style={{ animationDuration: "2s" }} />
+                    <circle r={10} fill="none" stroke="#e85d04" strokeWidth="2" opacity="0.8" />
+                    
+                    {/* Inner Graphic - Emulate Flag Style */}
+                    <circle r={7} fill="#1a202c" stroke="#e85d04" strokeWidth="1" />
+                    <circle r={3} fill="#a0aec0" />
                   </Marker>
                 ))}
               </ComposableMap>
