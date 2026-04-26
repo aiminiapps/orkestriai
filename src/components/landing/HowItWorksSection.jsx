@@ -114,11 +114,7 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section className="py-24 sm:py-32 relative overflow-hidden">
-      {/* Global Theme Background Glows */}
-      <div className="absolute top-1/2 -left-1/4 w-[500px] h-[500px] bg-[#7c75ff]/5 rounded-full blur-[140px] mix-blend-screen pointer-events-none" />
-      <div className="absolute bottom-0 right-[-10%] w-[400px] h-[400px] bg-[#2dd4a0]/5 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
-
+    <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header Block matching the provided layout */}
@@ -134,7 +130,7 @@ export default function HowItWorksSection() {
             className="text-4xl sm:text-5xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
           >
             Unlock the Full Potential of <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500">
+            <span className="text-transparent bg-clip-text bg-[#7c75ff]">
               Your Crypto Experience
             </span>
           </motion.h2>

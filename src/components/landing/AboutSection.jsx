@@ -50,10 +50,6 @@ export default function AboutSection() {
 
   return (
     <section className="py-20 relative overflow-hidden">
-      {/* Background Orbs to blend with the project theme */}
-      <div className="absolute top-1/2 -left-1/4 w-[500px] h-[500px] bg-[#7c75ff]/5 rounded-full blur-[140px] mix-blend-screen pointer-events-none" />
-      <div className="absolute bottom-0 right-[-10%] w-[400px] h-[400px] bg-[#2dd4a0]/5 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col-reverse lg:flex-row gap-16 lg:gap-24 items-center">
           
