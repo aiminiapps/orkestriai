@@ -69,7 +69,7 @@ export default function AboutSection() {
             <motion.div variants={fadeUp} custom={0} className="mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
                 <RiEarthLine className="text-white/60" />
-                <span className="text-xs font-semibold text-white/70 tracking-wide uppercase">
+                <span className="text-xs font-semibold text-white/70 ">
                   Global Intelligence Network
                 </span>
               </div>
@@ -82,7 +82,7 @@ export default function AboutSection() {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
             >
               Analyze Your Next Crypto Move with{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7c75ff] to-[#4a9eff]">
+              <span className="text-[#7c75ff]">
                 Machine Precision
               </span>
             </motion.h2>
