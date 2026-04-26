@@ -49,7 +49,7 @@ export default function AboutSection() {
   ];
 
   return (
-    <section className="py-24 sm:py-32 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       {/* Background Orbs to blend with the project theme */}
       <div className="absolute top-1/2 -left-1/4 w-[500px] h-[500px] bg-[#7c75ff]/5 rounded-full blur-[140px] mix-blend-screen pointer-events-none" />
       <div className="absolute bottom-0 right-[-10%] w-[400px] h-[400px] bg-[#2dd4a0]/5 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
@@ -79,9 +79,9 @@ export default function AboutSection() {
             <motion.h2 
               variants={fadeUp} 
               custom={1}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
             >
-              Analyze Your Next Crypto Move with{" "}
+              Smart Investing with{" "}
               <span className="text-[#7c75ff]">
                 Machine Precision
               </span>
@@ -121,27 +121,32 @@ export default function AboutSection() {
 
           {/* Right Graphic Area (A premium 2D Dot Map with Network Connections) */}
           <motion.div 
-            className="flex-1 w-full relative min-h-[400px] lg:min-h-[600px] flex items-center justify-center pointer-events-none"
+            className="flex-1 w-full relative h-[400px] lg:h-[600px] flex items-center justify-center pointer-events-none overflow-hidden rounded-3xl"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="w-full h-full relative" style={{ mixBlendMode: "screen" }}>
-              
-              {/* Soft background glow for the map */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[#7c75ff]/10 rounded-full blur-[80px]" />
-
+            <div className="absolute inset-0 w-[140%] h-[140%] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ mixBlendMode: "screen" }}>
               <ComposableMap
                 projection="geoEquirectangular"
-                projectionConfig={{ scale: 180, center: [0, 10] }}
-                className="w-full h-full object-contain"
+                projectionConfig={{ scale: 220, center: [20, 10] }}
+                className="w-full h-full object-cover"
               >
-                {/* Custom Dot Pattern Definition */}
+                {/* Custom Dot Pattern and Glow Gradients */}
                 <defs>
                   <pattern id="dotPattern" x="0" y="0" width="3" height="3" patternUnits="userSpaceOnUse">
-                    <circle cx="1.5" cy="1.5" r="1" fill="#ffffff" opacity="0.15" />
+                    <circle cx="1.5" cy="1.5" r="1.2" fill="#ffffff" opacity="0.2" />
                   </pattern>
+                  <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#7c75ff" stopOpacity="0" />
+                    <stop offset="50%" stopColor="#2dd4a0" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#7c75ff" stopOpacity="0" />
+                  </linearGradient>
+                  <linearGradient id="arcGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#7c75ff" />
+                    <stop offset="100%" stopColor="#2dd4a0" />
+                  </linearGradient>
                 </defs>
 
                 <Geographies geography={geoUrl}>
@@ -166,15 +171,27 @@ export default function AboutSection() {
 
                 {/* Animated Connecting Arcs */}
                 {lines.map((line, i) => (
-                  <Line
-                    key={`line-${i}`}
-                    from={line.from}
-                    to={line.to}
-                    stroke="rgba(124, 117, 255, 0.3)"
-                    strokeWidth={1}
-                    strokeLinecap="round"
-                    className={`animated-arc-${i % 2 === 0 ? 'fast' : 'slow'}`}
-                  />
+                  <g key={`line-group-${i}`}>
+                    {/* Glow aura */}
+                    <Line
+                      from={line.from}
+                      to={line.to}
+                      stroke="url(#arcGlow)"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      opacity="0.15"
+                      style={{ filter: "blur(4px)" }}
+                    />
+                    {/* The traveling beam */}
+                    <Line
+                      from={line.from}
+                      to={line.to}
+                      stroke="url(#arcGradient)"
+                      strokeWidth={1.5}
+                      strokeLinecap="round"
+                      className={`animated-arc-${i % 2 === 0 ? 'fast' : 'slow'}`}
+                    />
+                  </g>
                 ))}
 
                 {/* Active Hub Markers */}
@@ -198,12 +215,12 @@ export default function AboutSection() {
       {/* Global styles for the SVG map animations */}
       <style jsx global>{`
         .animated-arc-fast {
-          stroke-dasharray: 4 8;
-          animation: map-dash-fast 10s linear infinite;
+          stroke-dasharray: 8 20;
+          animation: map-dash-fast 3s linear infinite;
         }
         .animated-arc-slow {
-          stroke-dasharray: 5 10;
-          animation: map-dash-slow 15s linear infinite;
+          stroke-dasharray: 6 24;
+          animation: map-dash-slow 4.5s linear infinite;
         }
         @keyframes map-dash-fast {
           from { stroke-dashoffset: 100; }
