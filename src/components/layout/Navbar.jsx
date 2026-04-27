@@ -17,6 +17,7 @@ import {
   RiHome4Line,
 } from "react-icons/ri";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Home", icon: RiHome4Line },
@@ -75,12 +76,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-14 px-4 sm:px-5">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7c75ff] to-[#4a9eff] flex items-center justify-center shadow-lg shadow-[#7c75ff]/20">
-                <RiRobot2Line className="text-white text-lg" />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-white hidden sm:block">
-                Orkestri<span className="text-gradient"> AI</span>
-              </span>
+             <Image src="/logo.png" alt="Orkestri Logo" width={140} height={50} />
             </Link>
 
             {/* Desktop Nav */}
