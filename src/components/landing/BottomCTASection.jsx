@@ -14,7 +14,7 @@ export default function BottomCTASection() {
           <div className="w-full lg:w-5/12 flex flex-col items-start z-20">
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-[1.15] tracking-tight">
               Enter the <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7c75ff] to-[#2dd4a0]">
+              <span className="text-[#7c75ff]">
                 Intelligence Arena
               </span>
             </h2>
@@ -24,7 +24,7 @@ export default function BottomCTASection() {
             <div className="flex flex-wrap items-center gap-4">
               <Link href="/arena">
                 <button className="px-8 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-white/90 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.25)] hover:-translate-y-0.5 flex items-center gap-2 group">
-                  Launch App
+                  Launch Agent
                   <RiArrowRightLine className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
@@ -37,11 +37,11 @@ export default function BottomCTASection() {
           </div>
 
           {/* Right Animated Visual (Tilted Canvas Mockup) */}
-          <div className="w-full lg:w-7/12 relative h-[400px] lg:h-[500px] perspective-[1200px] flex items-center justify-center lg:justify-end">
+          <div className="w-full lg:w-7/12 relative h-[400px] lg:h-[400px] perspective-[1200px] flex items-center justify-center lg:justify-end">
             
             {/* The 3D Mockup Container */}
             <motion.div 
-              className="absolute w-[700px] sm:w-[800px] h-[450px] sm:h-[500px] left-0 sm:left-10 lg:left-auto lg:-right-20 transform-style-3d z-10"
+              className="absolute w-[700px] sm:w-[800px] h-[450px] sm:h-[450px] left-0 sm:left-10 lg:left-auto lg:-right-32 lg:-bottom-16 transform-style-3d z-10"
               initial={{ rotateY: -15, rotateX: 10, rotateZ: -2 }}
               animate={{ 
                 y: [-10, 10, -10],
