@@ -210,23 +210,43 @@ export default function FeaturesBentoSection() {
             </div>
             
             {/* Visual Orbital Rings */}
-            <div className="absolute inset-0 top-32 flex items-center justify-center overflow-hidden pointer-events-none">
-               {/* 3 Rings */}
-               <div className="absolute w-[400px] h-[400px] rounded-full border border-white/[0.03] animate-[spin_60s_linear_infinite]">
-                  {/* Orbiting Logo */}
-                  <div className="absolute bottom-10 left-10 -translate-x-1/2 translate-y-1/2 w-8 h-8 rounded-full border border-white/[0.1] bg-[#0b0c12] p-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] animate-[spin_60s_linear_infinite_reverse]">
+            <div className="absolute inset-0 top-32 flex items-center justify-center overflow-hidden pointer-events-none scale-90 sm:scale-100">
+               {/* Ring 1: Outer (300px) */}
+               <div className="absolute w-[300px] h-[300px] rounded-full border border-white/[0.03] animate-[spin_60s_linear_infinite]">
+                  {/* SOL - Bottom Left */}
+                  <div className="absolute bottom-[14.6%] left-[14.6%] -translate-x-1/2 translate-y-1/2 w-7 h-7 rounded-full border border-white/[0.1] bg-[#0b0c12] p-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] animate-[spin_60s_linear_infinite_reverse]">
                     <img src="https://cryptologos.cc/logos/solana-sol-logo.svg?v=025" alt="SOL" className="w-full h-full object-contain" />
                   </div>
+                  {/* MATIC - Bottom Right */}
+                  <div className="absolute bottom-[14.6%] right-[14.6%] translate-x-1/2 translate-y-1/2 w-7 h-7 rounded-full border border-white/[0.1] bg-[#0b0c12] p-1 shadow-[0_0_15px_rgba(255,255,255,0.1)] animate-[spin_60s_linear_infinite_reverse]">
+                    <img src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=025" alt="MATIC" className="w-full h-full object-contain" />
+                  </div>
+                  {/* ARB - Top Right */}
+                  <div className="absolute top-[14.6%] right-[14.6%] translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full border border-white/[0.1] bg-[#0b0c12] p-1 shadow-[0_0_15px_rgba(255,255,255,0.1)] animate-[spin_60s_linear_infinite_reverse]">
+                    <img src="https://cryptologos.cc/logos/arbitrum-arb-logo.svg?v=025" alt="ARB" className="w-full h-full object-contain" />
+                  </div>
+                  {/* AVAX - Top Left */}
+                  <div className="absolute top-[14.6%] left-[14.6%] -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full border border-white/[0.1] bg-[#0b0c12] p-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] animate-[spin_60s_linear_infinite_reverse]">
+                    <img src="https://cryptologos.cc/logos/avalanche-avax-logo.svg?v=025" alt="AVAX" className="w-full h-full object-contain" />
+                  </div>
                </div>
-               <div className="absolute w-[280px] h-[280px] rounded-full border border-dashed border-[#7c75ff]/30 animate-[spin_40s_linear_infinite_reverse]">
-                  {/* Orbiting Logo */}
+
+               {/* Ring 2: Middle (210px) */}
+               <div className="absolute w-[210px] h-[210px] rounded-full border border-dashed border-[#7c75ff]/30 animate-[spin_40s_linear_infinite_reverse]">
+                  {/* ETH - Top */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-[#7c75ff]/50 bg-[#1e1c2e] p-1.5 shadow-[0_0_15px_#7c75ff40] animate-[spin_40s_linear_infinite]">
                     <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=025" alt="ETH" className="w-full h-full object-contain" />
                   </div>
+                  {/* BNB - Bottom */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-8 h-8 rounded-full border border-[#f3ba2f]/50 bg-[#2a2414] p-1.5 shadow-[0_0_15px_#f3ba2f40] animate-[spin_40s_linear_infinite]">
+                    <img src="https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=025" alt="BNB" className="w-full h-full object-contain" />
+                  </div>
                </div>
-               <div className="absolute w-[160px] h-[160px] rounded-full border border-dotted border-[#f7c94b]/40 animate-[spin_20s_ease-in-out_infinite]">
-                  {/* Orbiting Logo */}
-                  <div className="absolute bottom-0 right-1/4 translate-x-1/2 translate-y-1/2 w-8 h-8 rounded-full border border-[#f7c94b]/50 bg-[#2a2414] p-1 shadow-[0_0_15px_#f7c94b40] animate-[spin_20s_ease-in-out_infinite_reverse]">
+
+               {/* Ring 3: Inner (120px) */}
+               <div className="absolute w-[120px] h-[120px] rounded-full border border-dotted border-[#f7c94b]/40 animate-[spin_20s_ease-in-out_infinite]">
+                  {/* BTC - Right */}
+                  <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-[#f7c94b]/50 bg-[#2a2414] p-1 shadow-[0_0_15px_#f7c94b40] animate-[spin_20s_ease-in-out_infinite_reverse]">
                     <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=025" alt="BTC" className="w-full h-full object-contain" />
                   </div>
                </div>
