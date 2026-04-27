@@ -21,60 +21,38 @@ const fadeUp = {
 
 // ── MICRO DETAIL COMPONENTS ──
 
-// Card 1 Background: Circuitry Traces
-const CircuitBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity duration-700">
-    <svg className="w-full h-full" viewBox="0 0 200 200" fill="none">
-      {/* Background Grid */}
-      <pattern id="grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-      </pattern>
-      <rect x="0" y="0" width="100%" height="100%" fill="url(#grid)" />
-      
-      {/* Tech Traces */}
-      <path d="M-10,120 L40,120 L60,100 L140,100 L160,80 L210,80" stroke="#7c75ff" strokeWidth="1.5" strokeDasharray="4 8" className="animate-[dash_15s_linear_infinite]" />
-      <path d="M-10,150 L30,150 L50,130 L100,130 L110,120" stroke="#7c75ff" strokeWidth="1" opacity="0.5" />
-      <path d="M80,-10 L80,40 L100,60 L180,60" stroke="#7c75ff" strokeWidth="1" opacity="0.5" />
-      <circle cx="60" cy="100" r="2.5" fill="#7c75ff" className="animate-ping" style={{ animationDuration: '3s' }} />
-      <circle cx="160" cy="80" r="2.5" fill="#7c75ff" className="animate-ping" style={{ animationDuration: '4s' }} />
-      <circle cx="100" cy="60" r="2" fill="#ffffff" />
-    </svg>
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#7c75ff]/15 rounded-full blur-3xl" />
-  </div>
-);
+import {
+  RiFileTextLine,
+  RiScanLine,
+  RiRadarLine,
+  RiBarChartBoxLine,
+  RiPulseLine,
+  RiStockLine
+} from "react-icons/ri";
 
-// Card 2 Background: Floating Platforms
-const PlatformsBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity duration-700 flex items-center justify-center">
-    <div className="relative w-48 h-48 perspective-[800px] flex items-center justify-center">
-      {/* Center glowing axle */}
-      <div className="absolute w-[1px] h-full bg-gradient-to-b from-transparent via-[#f7c94b]/30 to-transparent" />
-      
-      <div className="absolute w-36 h-36 rounded-2xl border border-[#f7c94b]/40 bg-gradient-to-br from-[#f7c94b]/10 to-transparent shadow-[inset_0_0_20px_rgba(247,201,75,0.1)] transform rotateX-[65deg] rotateZ-[45deg] translate-y-10 animate-[float_6s_ease-in-out_infinite]" />
-      <div className="absolute w-24 h-24 rounded-xl border border-[#f7c94b]/60 bg-gradient-to-br from-[#f7c94b]/20 to-transparent shadow-[inset_0_0_15px_rgba(247,201,75,0.2)] transform rotateX-[65deg] rotateZ-[45deg] translate-y-0 animate-[float_6s_ease-in-out_infinite_1s]" />
-      <div className="absolute w-12 h-12 rounded-lg border border-[#f7c94b]/80 bg-[#f7c94b]/30 shadow-[0_0_15px_rgba(247,201,75,0.4)] transform rotateX-[65deg] rotateZ-[45deg] -translate-y-10 animate-[float_6s_ease-in-out_infinite_2s]" />
-    </div>
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#f7c94b]/15 rounded-full blur-3xl" />
-  </div>
-);
-
-// Card 3 Background: Crypto Data Grid
-const CryptoGridBackground = () => {
-  const icons = [RiCoinLine, RiWallet3Line, RiBankCardLine, RiCoinLine];
+const DynamicGridBackground = ({ color, icons, rotation, index }) => {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity duration-700 flex items-center justify-center">
-      <div className="grid grid-cols-4 gap-4 w-[140%] rotate-12 scale-110">
-        {Array.from({ length: 16 }).map((_, i) => {
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 group-hover:opacity-[0.85] transition-opacity duration-1000 flex items-center justify-center z-0">
+      <div className={`grid grid-cols-4 gap-3 sm:gap-4 w-[160%] ${rotation} scale-110 opacity-70`}>
+        {Array.from({ length: 20 }).map((_, i) => {
           const Icon = icons[i % icons.length];
-          const hasIcon = i % 3 === 0;
+          const hasIcon = (i + index) % 3 === 0;
+          const floatDelay = (i % 5) * 0.4;
           return (
-            <div key={i} className="aspect-square rounded-2xl border border-white/[0.04] bg-white/[0.01] shadow-[inset_0_0_10px_rgba(255,255,255,0.01)] flex items-center justify-center transition-all duration-500 group-hover:border-[#2dd4a0]/20 group-hover:bg-[#2dd4a0]/[0.03]">
-              {hasIcon && <Icon className="text-[#2dd4a0]/40 text-2xl drop-shadow-[0_0_5px_rgba(45,212,160,0.5)]" />}
-            </div>
+            <motion.div 
+              key={i} 
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 5, delay: floatDelay, repeat: Infinity, ease: "easeInOut" }}
+              className="aspect-square rounded-2xl border border-white/[0.04] bg-[#0b0c12]/20 flex items-center justify-center transition-all duration-700 group-hover:border-white/[0.08] group-hover:bg-[#0b0c12]/40"
+              style={{ boxShadow: `inset 0 0 20px rgba(255,255,255,0.01)` }}
+            >
+              {hasIcon && <Icon className="text-[28px] opacity-30 group-hover:opacity-60 transition-opacity duration-700 drop-shadow-[0_0_10px_currentColor]" style={{ color }} />}
+            </motion.div>
           );
         })}
       </div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#2dd4a0]/15 rounded-full blur-3xl" />
+      {/* Intense Core Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full blur-[80px]" style={{ backgroundColor: `${color}30` }} />
     </div>
   );
 };
@@ -88,7 +66,8 @@ const steps = [
     color: "#7c75ff",
     bgAccent: "from-[#7c75ff]/20 to-transparent",
     glowColor: "rgba(124, 117, 255, 0.4)",
-    BackgroundComponent: CircuitBackground,
+    icons: [RiSearchLine, RiFileTextLine, RiScanLine, RiRadarLine],
+    rotation: "-rotate-12",
   },
   {
     prefix: "02",
@@ -98,7 +77,8 @@ const steps = [
     color: "#f7c94b",
     bgAccent: "from-[#f7c94b]/20 to-transparent",
     glowColor: "rgba(247, 201, 75, 0.4)",
-    BackgroundComponent: PlatformsBackground,
+    icons: [RiScales3Line, RiBarChartBoxLine, RiPulseLine, RiStockLine],
+    rotation: "rotate-6",
   },
   {
     prefix: "03",
@@ -108,7 +88,8 @@ const steps = [
     color: "#2dd4a0",
     bgAccent: "from-[#2dd4a0]/20 to-transparent",
     glowColor: "rgba(45, 212, 160, 0.4)",
-    BackgroundComponent: CryptoGridBackground,
+    icons: [RiTrophyLine, RiCoinLine, RiWallet3Line, RiBankCardLine],
+    rotation: "rotate-12",
   },
 ];
 
@@ -154,10 +135,19 @@ export default function HowItWorksSection() {
               transition={{ duration: 0.7, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
               className="group h-[450px] relative rounded-3xl border border-white/[0.05] bg-gradient-to-b from-white/[0.04] to-transparent overflow-hidden flex flex-col p-4 sm:p-6"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-[#0b0c12] pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0b0c12]/50 to-[#0b0c12] pointer-events-none z-0" />
               
               {/* Dynamic Micro-Detail Background Component */}
-              <step.BackgroundComponent />
+              <DynamicGridBackground color={step.color} icons={step.icons} rotation={step.rotation} index={i} />
+
+              {/* Cinematic Film Grain Overlay */}
+              <svg className="absolute inset-0 w-full h-full opacity-[0.25] group-hover:opacity-[0.35] pointer-events-none mix-blend-overlay z-10 transition-opacity duration-700">
+                <filter id={`cinematicNoise-${i}`}>
+                  <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+                  <feColorMatrix type="saturate" values="0" />
+                </filter>
+                <rect width="100%" height="100%" filter={`url(#cinematicNoise-${i})`} />
+              </svg>
 
               {/* Centered Floating Glowing Icon */}
               <div className="flex-1 flex items-center justify-center relative">
