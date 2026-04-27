@@ -114,11 +114,10 @@ export default function MeetAgentsSection() {
 
                     {/* Raised Bottom Content Card */}
                     <div className="absolute bottom-3 left-3 right-3 bg-[#13141f]/90 backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-6 z-30 transition-transform duration-500 group-hover:-translate-y-1 shadow-[0_15px_40px_rgba(0,0,0,0.6)] flex flex-col items-center justify-center text-center">
-                      <h3 className="text-lg font-bold text-white mb-2.5 tracking-tight group-hover:text-transparent group-hover:bg-clip-text transition-colors duration-300"
-                          style={{ backgroundImage: `linear-gradient(to right, white, ${agent.avatarColor})` }}>
+                      <h3 className={`text-lg font-semibold  mb-2.5 tracking-tight text-[${agent.avatarColor}] bg-clip-text transition-colors duration-300`}>
                         {agent.name}
                       </h3>
-                      <p className="text-white/40 text-[13px] leading-relaxed line-clamp-3">
+                      <p className="text-white/40 text-[13px]">
                         {agent.specialty}
                       </p>
                     </div>
