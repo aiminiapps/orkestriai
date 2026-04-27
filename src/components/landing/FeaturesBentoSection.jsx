@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { 
   RiFundsLine, 
   RiExchangeLine, 
@@ -252,10 +253,9 @@ export default function FeaturesBentoSection() {
                </div>
                
                {/* Center Main Core */}
-               <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-to-br from-[#0b0c12] to-[#1a1b26] border border-[#f7c94b]/60 flex items-center justify-center shadow-[0_0_30px_#f7c94b30] transition-transform duration-700 group-hover:scale-110">
+               <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-to-br from-[#0b0c12] to-[#1a1b26] border flex items-center justify-center shadow-[0_0_30px_#f7c94b30] transition-transform duration-700 group-hover:scale-110">
                   <div className="flex flex-col items-center">
-                     <span className="text-[#f7c94b] font-bold text-lg leading-tight uppercase">Okai</span>
-                     <span className="text-white/40 text-[10px]">Token</span>
+                    <Image src="/agent.png" alt="OKAI" width={100} height={100} />
                   </div>
                </div>
 
