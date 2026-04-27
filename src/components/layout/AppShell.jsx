@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 export default function AppShell({ children }) {
   return (
@@ -16,6 +17,9 @@ export default function AppShell({ children }) {
       <main className="pt-24 pb-8 min-h-screen">
         {children}
       </main>
+
+      {/* Global Footer */}
+      <Footer />
     </div> 
   );
 }
