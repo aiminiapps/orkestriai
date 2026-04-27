@@ -71,15 +71,6 @@ export default function MeetAgentsSection() {
               >
                 <Link href={`/agents/${agent.slug}`} className="block h-full">
                   <div className="relative h-[420px] rounded-[32px] transition-all duration-500 cursor-pointer overflow-hidden group bg-[#0b0c12] border border-white/[0.05] hover:border-white/[0.1] hover:shadow-2xl hover:-translate-y-2">
-                    
-                    {/* SVG Noise Texture Overlay */}
-                    <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none mix-blend-overlay group-hover:opacity-[0.06] transition-opacity duration-700">
-                      <filter id="noiseFilter">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
-                      </filter>
-                      <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-                    </svg>
-
                     {/* Faint Dot Grid */}
                     <div className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700" 
                          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
@@ -96,13 +87,23 @@ export default function MeetAgentsSection() {
                        <div className="absolute top-40 right-10 w-20 h-20 rounded-[20px] border-2 border-white -rotate-[24deg]" />
                     </div>
 
-                    {/* Glowing Core Icon */}
-                    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                      {/* Intense Aura */}
-                      <div className="absolute inset-0 blur-[50px] scale-[2.5] transition-opacity duration-700 opacity-20 group-hover:opacity-60"
+                    {/* Base Intense Aura Gradient */}
+                    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 pointer-events-none">
+                      <div className="absolute inset-0 blur-[60px] scale-[2.5] transition-opacity duration-700 opacity-30 group-hover:opacity-[0.85]"
                            style={{ backgroundColor: agent.avatarColor }} />
-                           
-                      {/* Glass Icon Box */}
+                    </div>
+
+                    {/* Cinematic IMAX Film Grain (Overlays the glowing aura) */}
+                    <svg className="absolute inset-0 w-full h-full opacity-[0.15] group-hover:opacity-[0.25] pointer-events-none mix-blend-overlay z-10 transition-opacity duration-700">
+                      <filter id={`cinematicNoise-${agent.slug}`}>
+                        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+                        <feColorMatrix type="saturate" values="0" />
+                      </filter>
+                      <rect width="100%" height="100%" filter={`url(#cinematicNoise-${agent.slug})`} />
+                    </svg>
+
+                    {/* Glass Icon Box */}
+                    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                       <div className="relative w-24 h-24 rounded-3xl flex items-center justify-center border bg-[#0b0c12]/60 backdrop-blur-xl transition-all duration-500 group-hover:scale-105"
                            style={{ 
                              borderColor: `${agent.avatarColor}40`,
