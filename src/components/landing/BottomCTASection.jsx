@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { RiArrowRightLine, RiNodeTree } from "react-icons/ri";
+import Image from "next/image";
 
 export default function BottomCTASection() {
   return (
@@ -83,11 +84,11 @@ export default function BottomCTASection() {
                   
                   {/* Center Core Node */}
                   <motion.div 
-                    className="absolute top-[225px] left-[400px] -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#7c75ff]/40 shadow-[0_0_40px_rgba(124,117,255,0.4)] flex items-center justify-center z-20"
+                    className="absolute top-[225px] left-[400px] -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border  flex items-center justify-center z-20"
                     animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 40px rgba(124,117,255,0.4)", "0 0 60px rgba(124,117,255,0.6)", "0 0 40px rgba(124,117,255,0.4)"] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <RiNodeTree className="text-[#7c75ff] text-2xl" />
+                    <Image src="/agent.png" alt="OKAI" width={100} height={100} />
                   </motion.div>
 
                   {/* Top Left Node: Research */}
