@@ -68,36 +68,81 @@ export default function FeaturesBentoSection() {
               </p>
             </div>
             
-            {/* Visual Canvas Mockup - Clean Minimal Approach */}
-            <div className="mt-12 flex-1 w-full flex relative overflow-hidden align-middle items-center justify-center min-h-[250px]">
+            {/* Visual Canvas Mockup - Fixed Coordinate Grid */}
+            <div className="mt-12 flex-1 w-full flex relative overflow-hidden items-center justify-center min-h-[300px]">
                {/* Subtle Dot Matrix Background */}
                <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0)", backgroundSize: "20px 20px" }} />
                
-               {/* Connecting SVG arc (Clean Beziers) */}
-               <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)', overflow: 'visible' }}>
-                 {/* Hub to Top Node */}
-                 <path d="M 0 0 C 0 -60, -80 -20, -120 -60" fill="none" stroke="#7c75ff" strokeWidth="1.5" strokeDasharray="3 6" className="animate-[dash_8s_linear_infinite]" opacity="0.6" />
-                 <path d="M 0 0 C 0 -60, -80 -20, -120 -60" fill="none" stroke="#7c75ff" strokeWidth="4" filter="blur(4px)" opacity="0.2" />
+               {/* Unified 600x300 Coordinate Space for Perfect Alignment */}
+               <div className="relative w-[600px] h-[300px] scale-75 sm:scale-90 md:scale-100 origin-center pointer-events-none">
                  
-                 {/* Hub to Bottom Node */}
-                 <path d="M 0 0 C 0 60, 100 20, 140 60" fill="none" stroke="#2dd4a0" strokeWidth="1.5" strokeDasharray="3 6" className="animate-[dash_6s_linear_infinite_reverse]" opacity="0.6" />
-                 <path d="M 0 0 C 0 60, 100 20, 140 60" fill="none" stroke="#2dd4a0" strokeWidth="4" filter="blur(4px)" opacity="0.2" />
-               </svg>
+                 {/* SVG Connecting Paths */}
+                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 300">
+                    {/* Center to Top-Left */}
+                    <path d="M 300 150 C 210 150, 210 80, 140 80" fill="none" stroke="#7c75ff" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_10s_linear_infinite]" opacity="0.4" />
+                    
+                    {/* Center to Top-Right */}
+                    <path d="M 300 150 C 390 150, 390 80, 460 80" fill="none" stroke="#2dd4a0" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_12s_linear_infinite_reverse]" opacity="0.4" />
+                    
+                    {/* Center to Bottom-Left */}
+                    <path d="M 300 150 C 210 150, 210 220, 140 220" fill="none" stroke="#f7c94b" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_8s_linear_infinite_reverse]" opacity="0.4" />
+                    
+                    {/* Center to Bottom-Right */}
+                    <path d="M 300 150 C 390 150, 390 220, 460 220" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_10s_linear_infinite]" opacity="0.4" />
+                 </svg>
 
-               {/* Central Core Node */}
-               <div className="absolute z-20 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#7c75ff]/40 shadow-[0_0_30px_#7c75ff30] flex items-center justify-center animate-[float_4s_ease-in-out_infinite]">
-                 <RiNodeTree className="text-[#7c75ff] text-2xl" />
-               </div>
+                 {/* Nodes Overlay */}
+                 
+                 {/* Center Hub */}
+                 <div className="absolute left-[300px] top-[150px] -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#7c75ff]/40 shadow-[0_0_30px_#7c75ff30] flex items-center justify-center animate-[float_4s_ease-in-out_infinite]">
+                   <RiNodeTree className="text-[#7c75ff] text-2xl" />
+                 </div>
 
-               {/* Branch Nodes */}
-               <div className="absolute z-10 top-6 left-[10%] bg-[#0b0c12]/90 backdrop-blur-xl border border-white/[0.08] rounded-full px-4 py-2 flex items-center gap-2 shadow-lg animate-[float_5s_ease-in-out_infinite_1s]">
-                 <div className="w-2 h-2 rounded-full bg-[#7c75ff] shadow-[0_0_8px_#7c75ff]" />
-                 <span className="text-white/80 text-xs font-mono">Market Intel</span>
-               </div>
+                 {/* Top-Left Content Card: Research */}
+                 <div className="absolute left-[140px] top-[80px] -translate-x-1/2 -translate-y-1/2 z-10 bg-[#0b0c12]/90 backdrop-blur-md border border-white/[0.08] rounded-xl p-3 w-[150px] shadow-xl shadow-black/50 animate-[float_5s_ease-in-out_infinite_1s]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#7c75ff] shadow-[0_0_8px_#7c75ff]" />
+                      <span className="text-white/80 text-[10px] font-mono uppercase tracking-wider">Research</span>
+                    </div>
+                    <div className="text-white/60 text-[9px] leading-relaxed">Cross-referencing whitepaper topology and tokenomics...</div>
+                 </div>
 
-               <div className="absolute z-10 bottom-6 right-[10%] bg-[#0b0c12]/90 backdrop-blur-xl border border-white/[0.08] rounded-full px-4 py-2 flex items-center gap-2 shadow-lg animate-[float_4.5s_ease-in-out_infinite_2s]">
-                 <div className="w-2 h-2 rounded-full bg-[#2dd4a0] shadow-[0_0_8px_#2dd4a0]" />
-                 <span className="text-white/80 text-xs font-mono">Risk Analysis</span>
+                 {/* Top-Right Content Card: Sentiment */}
+                 <div className="absolute left-[460px] top-[80px] -translate-x-1/2 -translate-y-1/2 z-10 bg-[#0b0c12]/90 backdrop-blur-md border border-white/[0.08] rounded-xl p-3 w-[150px] shadow-xl shadow-black/50 animate-[float_4.5s_ease-in-out_infinite_2s]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#2dd4a0] shadow-[0_0_8px_#2dd4a0]" />
+                      <span className="text-white/80 text-[10px] font-mono uppercase tracking-wider">Sentiment</span>
+                    </div>
+                    <div className="flex gap-1 mt-1">
+                      <span className="bg-[#2dd4a0]/10 text-[#2dd4a0] px-1.5 py-0.5 rounded text-[9px] font-medium border border-[#2dd4a0]/20">BULLISH</span>
+                      <span className="bg-white/5 text-white/50 px-1.5 py-0.5 rounded text-[9px]">98%</span>
+                    </div>
+                 </div>
+
+                 {/* Bottom-Left Content Card: Market Data */}
+                 <div className="absolute left-[140px] top-[220px] -translate-x-1/2 -translate-y-1/2 z-10 bg-[#0b0c12]/90 backdrop-blur-md border border-white/[0.08] rounded-xl p-3 w-[150px] shadow-xl shadow-black/50 animate-[float_5s_ease-in-out_infinite_1.5s]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#f7c94b] shadow-[0_0_8px_#f7c94b]" />
+                      <span className="text-white/80 text-[10px] font-mono uppercase tracking-wider">Market</span>
+                    </div>
+                    <div className="flex justify-between items-end mt-1">
+                      <span className="text-white/40 text-[9px]">24h Volume</span>
+                      <span className="text-[#f7c94b] font-mono text-[10px]">$1.2B</span>
+                    </div>
+                 </div>
+
+                 {/* Bottom-Right Content Card: Risk Eval */}
+                 <div className="absolute left-[460px] top-[220px] -translate-x-1/2 -translate-y-1/2 z-10 bg-[#0b0c12]/90 backdrop-blur-md border border-white/[0.08] rounded-xl p-3 w-[150px] shadow-xl shadow-black/50 animate-[float_4s_ease-in-out_infinite_0.5s]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]" />
+                      <span className="text-white/80 text-[10px] font-mono uppercase tracking-wider">Risk Eval</span>
+                    </div>
+                    <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden mb-1">
+                       <div className="bg-[#ef4444] h-full w-[15%]" />
+                    </div>
+                    <span className="text-white/50 text-[9px]">Low Contract Risk</span>
+                 </div>
+
                </div>
             </div>
           </motion.div>
