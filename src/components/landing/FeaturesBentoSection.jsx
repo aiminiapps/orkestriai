@@ -279,50 +279,80 @@ export default function FeaturesBentoSection() {
               </p>
             </div>
             
-            {/* Card 4: Real-Time Intelligence Terminal Feed */}
-            <div className="relative mt-8 min-h-[250px] overflow-hidden w-full flex items-end">
-              {/* Terminal Frame */}
-              <div className="w-full h-full absolute inset-0 bg-[#0b0c12]/80 backdrop-blur-xl border-t border-[#2dd4a0]/20 rounded-t-3xl shadow-[inset_0_20px_40px_rgba(45,212,160,0.05)] overflow-hidden">
+            {/* Card 4: Desktop OS Skeleton with Live Notifications */}
+            <div className="relative mt-8 min-h-[300px] w-full flex items-end justify-center px-4 sm:px-8 overflow-hidden">
+              {/* Desktop Window Frame */}
+              <div className="w-full h-[280px] relative bg-[#0b0c12]/60 backdrop-blur-2xl border-t border-x border-white/[0.08] rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
                  
-                 {/* Moving Code/Log Feed Effect */}
-                 <div className="absolute inset-x-8 bottom-0 flex flex-col gap-3 pb-6">
-                    
-                    <motion.div 
-                      className="w-full bg-[#2dd4a0]/10 border border-[#2dd4a0]/20 rounded-lg p-3 backdrop-blur-sm"
-                      animate={{ y: [20, 0], opacity: [0, 1] }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#2dd4a0] animate-pulse" />
-                        <span className="text-[#2dd4a0] text-[10px] font-mono tracking-wider uppercase">Market Sentinel</span>
-                      </div>
-                      <span className="text-white/80 text-xs font-mono">Whale accumulation detected on Binance orderbooks. Validating volume spike...</span>
-                    </motion.div>
-
-                    <motion.div 
-                      className="w-full bg-[#7c75ff]/10 border border-[#7c75ff]/20 rounded-lg p-3 backdrop-blur-sm"
-                      animate={{ y: [20, 0], opacity: [0, 1] }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#7c75ff]" />
-                        <span className="text-[#7c75ff] text-[10px] font-mono tracking-wider uppercase">Sentiment Engine</span>
-                      </div>
-                      <span className="text-white/80 text-xs font-mono">X/Twitter mention velocity up 400% in last 1hr. Dominant emotion: Bullish.</span>
-                    </motion.div>
-
-                    <motion.div 
-                      className="w-3/4 bg-white/[0.03] border border-white/[0.05] rounded-lg p-3 backdrop-blur-sm"
-                      animate={{ y: [20, 0], opacity: [0, 0.4] }}
-                      transition={{ duration: 0.5, delay: 1.4 }}
-                    >
-                      <span className="text-white text-xs font-mono">Awaiting new blocks...</span>
-                    </motion.div>
-
+                 {/* Mac-style Window Header */}
+                 <div className="h-10 w-full border-b border-white/[0.05] bg-white/[0.02] flex items-center px-4 relative">
+                   <div className="flex gap-2 z-10">
+                     <div className="w-2.5 h-2.5 rounded-full bg-[#ef4444]/80 shadow-[0_0_5px_#ef444450]" />
+                     <div className="w-2.5 h-2.5 rounded-full bg-[#f7c94b]/80 shadow-[0_0_5px_#f7c94b50]" />
+                     <div className="w-2.5 h-2.5 rounded-full bg-[#2dd4a0]/80 shadow-[0_0_5px_#2dd4a050]" />
+                   </div>
+                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                     <span className="text-white/30 text-[10px] font-mono uppercase tracking-[0.2em]">Orkestri_OS</span>
+                   </div>
                  </div>
-                 
-                 {/* Top gradient fade-out to blend the text bubbling up */}
-                 <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#0b0c12] to-transparent z-10" />
+
+                 {/* Window Body (Desktop Grid) */}
+                 <div className="absolute inset-0 top-10 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
+
+                 {/* Floating Element 1: Live Price Widget */}
+                 <motion.div 
+                   animate={{ y: [10, -5, 0], opacity: [0, 1] }}
+                   transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                   className="absolute top-16 left-6 sm:left-10 w-48 bg-gradient-to-br from-[#1e1c2e]/90 to-[#0b0c12]/90 backdrop-blur-xl border border-[#7c75ff]/30 rounded-2xl p-4 shadow-[0_15px_30px_rgba(124,117,255,0.15)] group-hover:scale-[1.02] transition-transform duration-500"
+                 >
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex items-center gap-1.5">
+                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=025" alt="BTC" className="w-4 h-4" />
+                        <span className="text-white/60 text-[10px] font-mono">BTC/USD</span>
+                      </div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#2dd4a0] shadow-[0_0_8px_#2dd4a0] animate-pulse" />
+                    </div>
+                    <div className="text-2xl text-white font-bold tracking-tight">$94,201.00</div>
+                    <div className="text-[#2dd4a0] text-xs font-medium mt-1">+2.4% (1H)</div>
+                    
+                    {/* Mini SVG Sparkline */}
+                    <svg className="w-full h-8 mt-3 overflow-visible" viewBox="0 0 100 30" preserveAspectRatio="none">
+                       <path d="M 0 25 Q 15 25 25 15 T 50 10 T 75 20 T 100 5" fill="none" stroke="#2dd4a0" strokeWidth="2.5" className="drop-shadow-[0_2px_4px_rgba(45,212,160,0.4)]" />
+                    </svg>
+                 </motion.div>
+
+                 {/* Floating Element 2: Volume Notification */}
+                 <motion.div 
+                   animate={{ x: [20, -5, 0], opacity: [0, 1] }}
+                   transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                   className="absolute top-24 right-4 sm:right-8 w-56 sm:w-64 bg-[#0b0c12]/90 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-3 shadow-2xl flex items-start gap-3 group-hover:-translate-y-1 transition-transform duration-500"
+                 >
+                   <div className="w-8 h-8 rounded-full bg-[#7c75ff]/20 flex items-center justify-center shrink-0 mt-0.5">
+                     <RiFundsLine className="text-[#7c75ff]" />
+                   </div>
+                   <div>
+                     <div className="text-white text-xs font-semibold">Volume Breakout</div>
+                     <div className="text-white/50 text-[10px] leading-relaxed mt-0.5">Ethereum 24h volume spiked 42%. Rally confirmation pending.</div>
+                   </div>
+                 </motion.div>
+
+                 {/* Floating Element 3: Agent Consensus Notification */}
+                 <motion.div 
+                   animate={{ y: [20, -5, 0], opacity: [0, 1] }}
+                   transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
+                   className="absolute bottom-8 right-6 sm:right-16 w-60 sm:w-72 bg-gradient-to-r from-[#2a2414]/90 to-[#0b0c12]/90 backdrop-blur-2xl border border-[#f7c94b]/40 rounded-2xl p-3 shadow-[0_10px_40px_rgba(247,201,75,0.15)] flex items-center gap-3 group-hover:-translate-y-2 transition-transform duration-500"
+                 >
+                   <div className="w-8 h-8 rounded-full bg-[#f7c94b]/20 flex items-center justify-center shrink-0">
+                     <RiVipCrownLine className="text-[#f7c94b]" />
+                   </div>
+                   <div>
+                     <div className="text-[#f7c94b] text-[11px] font-bold uppercase tracking-wide">Consensus Reached</div>
+                     <div className="text-white/80 text-[10px] mt-0.5">All 3 agents align on <span className="font-bold text-white">STRONG BUY</span>.</div>
+                   </div>
+                 </motion.div>
+
+                 {/* Base Fade for depth */}
+                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0b0c12] to-transparent pointer-events-none" />
               </div>
             </div>
           </motion.div>
