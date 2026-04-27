@@ -19,7 +19,7 @@ const getAgentIcon = (slug) => {
 
 export default function MeetAgentsSection() {
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header Row (Image Layout Style) */}
@@ -70,43 +70,59 @@ export default function MeetAgentsSection() {
                 transition={{ duration: 0.5, delay: i * 0.15 }}
               >
                 <Link href={`/agents/${agent.slug}`} className="block h-full">
-                  <div className="relative h-full p-8 rounded-3xl transition-all duration-500 cursor-pointer overflow-hidden group bg-white/[0.02] border border-white/[0.05] hover:border-white/[0.1] hover:shadow-2xl hover:-translate-y-2">
+                  <div className="relative h-[420px] rounded-[32px] transition-all duration-500 cursor-pointer overflow-hidden group bg-[#0b0c12] border border-white/[0.05] hover:border-white/[0.1] hover:shadow-2xl hover:-translate-y-2">
                     
-                    {/* Hover Gradient Overlay (Image style dark fill effect) */}
-                    <div 
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" 
-                      style={{ 
-                        background: `linear-gradient(180deg, ${agent.avatarColor}10 0%, transparent 100%)` 
-                      }} 
-                    />
-                    
-                    {/* Dark Metallic Core (Appears on Hover) */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#1a1b26] to-[#0b0c12] opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                    {/* SVG Noise Texture Overlay */}
+                    <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none mix-blend-overlay group-hover:opacity-[0.06] transition-opacity duration-700">
+                      <filter id="noiseFilter">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                      </filter>
+                      <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+                    </svg>
 
-                    <div className="relative z-10 flex flex-col h-full">
-                      {/* Premium Rounded Icon Box */}
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-8 transition-all duration-500 group-hover:scale-110 shadow-lg bg-white/[0.03] border border-white/[0.08]"
+                    {/* Faint Dot Grid */}
+                    <div className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700" 
+                         style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+
+                    {/* Concentric Rings Pattern (Centered top) */}
+                    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] h-[240px] rounded-full border border-white/[0.02] group-hover:border-white/[0.06] transition-colors duration-500 pointer-events-none" />
+                    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] rounded-full border border-white/[0.01] group-hover:border-white/[0.03] transition-colors duration-500 pointer-events-none" />
+
+                    {/* Floating Structural Background Boxes (Faint) */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-0 group-hover:opacity-[0.03] transition-opacity duration-700">
+                       <div className="absolute top-10 left-4 w-20 h-20 rounded-[20px] border-2 border-white rotate-12" />
+                       <div className="absolute top-8 right-6 w-16 h-16 rounded-2xl border-2 border-white -rotate-12" />
+                       <div className="absolute top-48 left-12 w-24 h-24 rounded-3xl border-2 border-white rotate-45" />
+                       <div className="absolute top-40 right-10 w-20 h-20 rounded-[20px] border-2 border-white -rotate-[24deg]" />
+                    </div>
+
+                    {/* Glowing Core Icon */}
+                    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                      {/* Intense Aura */}
+                      <div className="absolute inset-0 blur-[50px] scale-[2.5] transition-opacity duration-700 opacity-20 group-hover:opacity-60"
+                           style={{ backgroundColor: agent.avatarColor }} />
+                           
+                      {/* Glass Icon Box */}
+                      <div className="relative w-24 h-24 rounded-3xl flex items-center justify-center border bg-[#0b0c12]/60 backdrop-blur-xl transition-all duration-500 group-hover:scale-105"
                            style={{ 
-                             color: agent.avatarColor,
-                             boxShadow: `inset 0 0 20px ${agent.avatarColor}10`
+                             borderColor: `${agent.avatarColor}40`,
+                             boxShadow: `inset 0 0 30px ${agent.avatarColor}10, 0 10px 40px ${agent.avatarColor}30`
                            }}>
-                        <Icon className="text-2xl drop-shadow-[0_0_10px_currentColor]" />
-                      </div>
-
-                      <h3 className="text-2xl font-bold text-white mb-4 tracking-tight transition-colors duration-300">
-                        {agent.name}
-                      </h3>
-                      
-                      <p className="text-white/40 text-sm leading-relaxed flex-1 group-hover:text-white/60 transition-colors duration-300">
-                        {agent.specialty}
-                      </p>
-
-                      <div className="mt-8 flex items-center gap-2 text-xs font-mono tracking-widest uppercase transition-colors duration-300"
-                           style={{ color: agent.avatarColor }}>
-                        View Passport
-                        <RiArrowRightLine className="group-hover:translate-x-1 transition-transform" />
+                         <Icon className="text-[40px] transition-transform duration-500 group-hover:scale-110 drop-shadow-[0_0_15px_currentColor]" style={{ color: agent.avatarColor }} />
                       </div>
                     </div>
+
+                    {/* Raised Bottom Content Card */}
+                    <div className="absolute bottom-3 left-3 right-3 bg-[#13141f]/90 backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-6 z-30 transition-transform duration-500 group-hover:-translate-y-1 shadow-[0_15px_40px_rgba(0,0,0,0.6)] flex flex-col items-center justify-center text-center">
+                      <h3 className="text-lg font-bold text-white mb-2.5 tracking-tight group-hover:text-transparent group-hover:bg-clip-text transition-colors duration-300"
+                          style={{ backgroundImage: `linear-gradient(to right, white, ${agent.avatarColor})` }}>
+                        {agent.name}
+                      </h3>
+                      <p className="text-white/40 text-[13px] leading-relaxed line-clamp-3">
+                        {agent.specialty}
+                      </p>
+                    </div>
+
                   </div>
                 </Link>
               </motion.div>
