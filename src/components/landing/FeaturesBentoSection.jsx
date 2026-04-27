@@ -95,8 +95,8 @@ export default function FeaturesBentoSection() {
                  {/* Nodes Overlay */}
                  
                  {/* Center Hub */}
-                 <div className="absolute left-[300px] top-[150px] -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#7c75ff]/40 shadow-[0_0_30px_#7c75ff30] flex items-center justify-center animate-[float_4s_ease-in-out_infinite]">
-                   <RiNodeTree className="text-[#7c75ff] text-2xl" />
+                 <div className="absolute left-[300px] top-[150px] -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#7c75ff]/40 shadow-[0_0_30px_#7c75ff30] flex items-center justify-center animate-[float_4s_ease-in-out_infinite]">
+                   <Image src="/agent.png" alt="OKAI" width={100} height={100} />
                  </div>
 
                  {/* Top-Left Content Card: Research */}
