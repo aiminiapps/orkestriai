@@ -265,13 +265,6 @@ export default function FeaturesBentoSection() {
         </div>
       </div>
 
-      <style jsx global>{`
-        @keyframes drawChart {
-          to {
-            stroke-dashoffset: 0;
-          }
-        }
-      `}</style>
     </section>
   );
 }
