@@ -1,29 +1,18 @@
+import Image from "next/image";
 import Link from "next/link";
 import { RiTwitterXLine, RiGithubLine, RiBookLine } from "react-icons/ri";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.05] bg-[#0b0c12]/80 backdrop-blur-3xl overflow-hidden mt-auto">
-      {/* Background Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-[#7c75ff]/50 to-transparent" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[100px] bg-[#7c75ff]/10 blur-[100px] pointer-events-none" />
-
+    <footer className="relative overflow-hidden mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-16">
           
           {/* Brand Column */}
           <div className="md:col-span-4 lg:col-span-5 flex flex-col items-start">
             <Link href="/" className="flex items-center gap-2 mb-6 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7c75ff] to-[#2dd4a0] flex items-center justify-center p-[1px] shadow-[0_0_20px_rgba(124,117,255,0.3)] group-hover:shadow-[0_0_30px_rgba(45,212,160,0.5)] transition-shadow duration-500">
-                <div className="w-full h-full bg-[#0b0c12] rounded-[11px] flex items-center justify-center">
-                  <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-white to-white/60">
-                    O
-                  </span>
-                </div>
-              </div>
-              <span className="text-2xl font-bold tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/60 transition-colors duration-300">
-                Orkestri
-              </span>
+              <Image src="/logo.png" alt="Orkestri Logo" width={140} height={50} />
+              
             </Link>
             <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-8">
               The ultimate multi-agent consensus network. Navigate the crypto landscape with real-time intelligence, risk profiling, and advanced market sentiment analysis.
@@ -35,10 +24,8 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Platform</h4>
             <ul className="space-y-4">
               <li><Link href="/agents" className="text-white/40 hover:text-white transition-colors text-sm">Agents</Link></li>
-              <li><Link href="/agents/research" className="text-white/40 hover:text-[#7c75ff] transition-colors text-sm">Agent Profiles</Link></li>
               <li><Link href="/arena" className="text-white/40 hover:text-white transition-colors text-sm">Compare</Link></li>
               <li><Link href="/leaderboard" className="text-white/40 hover:text-[#f7c94b] transition-colors text-sm">Board</Link></li>
-              <li><Link href="/profile" className="text-white/40 hover:text-white transition-colors text-sm">Profile</Link></li>
             </ul>
           </div>
 
@@ -75,14 +62,10 @@ export default function Footer() {
 
         </div>
 
-        <div className="pt-8 border-t border-white/[0.05] flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="pt-8 border-t border-white/[0.05] flex justify-center items-center gap-4">
           <p className="text-white/30 text-xs font-mono">
             © {new Date().getFullYear()} Orkestri AI. All rights reserved.
           </p>
-          <div className="flex gap-4 text-xs font-mono text-white/30">
-            <Link href="#" className="hover:text-white/60 transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white/60 transition-colors">Terms of Service</Link>
-          </div>
         </div>
       </div>
     </footer>
