@@ -6,7 +6,7 @@ import { RiArrowRightLine, RiNodeTree } from "react-icons/ri";
 
 export default function BottomCTASection() {
   return (
-    <section className="py-24 pb-32 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="relative rounded-[40px] bg-white/[0.02] border border-white/[0.05] overflow-hidden flex flex-col lg:flex-row items-center p-8 sm:p-12 lg:p-16 gap-12 lg:gap-8">
           
