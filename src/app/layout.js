@@ -16,23 +16,57 @@ const dmMono = DM_Mono({
 });
 
 export const metadata = {
-  title: "Orkestri AI — Crypto Investment AI Agent Arena",
+  metadataBase: new URL("https://www.orkestri-ai.xyz"),
+  title: {
+    default: "Orkestri AI — Multi-Agent Crypto Intelligence Arena",
+    template: "%s | Orkestri AI",
+  },
   description:
-    "Compare AI-powered crypto investment analyses from Research, Market, and Risk agents. Get multi-perspective insights for smarter investment decisions.",
+    "Navigate the crypto landscape with real-time multi-agent consensus. Compare AI-powered crypto investment analyses from Research, Market, and Risk agents for smarter investment decisions.",
   keywords: [
+    "Orkestri AI",
     "crypto",
-    "AI",
-    "investment",
-    "analysis",
+    "AI agents",
+    "crypto investment",
+    "AI market analysis",
     "blockchain",
     "DeFi",
-    "agent",
+    "multi-agent consensus"
   ],
+  authors: [{ name: "Orkestri AI", url: "https://www.orkestri-ai.xyz" }],
+  creator: "Orkestri AI",
+  icons: {
+    icon: "/agent.png",
+    shortcut: "/agent.png",
+    apple: "/agent.png",
+  },
   openGraph: {
-    title: "Orkestri AI — Crypto Investment AI Agent Arena",
+    type: "website",
+    locale: "en_US",
+    url: "https://www.orkestri-ai.xyz",
+    siteName: "Orkestri AI",
+    title: "Orkestri AI — Multi-Agent Crypto Intelligence Arena",
+    description:
+      "Navigate the crypto landscape with real-time multi-agent consensus from Research, Market, and Risk agents.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Orkestri AI — Multi-Agent Crypto Intelligence Arena",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Orkestri AI — Multi-Agent Crypto Intelligence Arena",
     description:
       "Compare AI-powered crypto investment analyses from Research, Market, and Risk agents.",
-    type: "website",
+    images: ["/og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -43,6 +77,24 @@ export default function RootLayout({ children }) {
       data-scroll-behavior="smooth"
       className={`${spaceGrotesk.variable} ${dmMono.variable} dark`}
     >
+      <head>
+        {/* Organization Schema for Google Knowledge Panel & Official Links */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Orkestri AI",
+              url: "https://www.orkestri-ai.xyz",
+              logo: "https://www.orkestri-ai.xyz/agent.png",
+              sameAs: [
+                "https://orkestri-ai.gitbook.io/orkestri-ai-docs",
+              ],
+            }),
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-gradient-animated">
         <WalletProvider>{children}</WalletProvider>
       </body>
