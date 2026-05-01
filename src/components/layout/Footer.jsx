@@ -34,7 +34,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-6 tracking-wide uppercase text-xs">Ecosystem & Social</h4>
             <ul className="space-y-4">
               <li>
-                <a href="#" className="group flex items-center gap-2 text-white/40 hover:text-[#f3ba2f] transition-colors text-sm">
+                <a href="https://bscscan.com/token/0xd3144dd40AcA457B5196B64977970D26B955e59C" target="_blank" className="group flex items-center gap-2 text-white/40 hover:text-[#f3ba2f] transition-colors text-sm">
                   <div className="w-6 h-6 rounded-md bg-white/[0.05] border border-white/[0.1] flex items-center justify-center group-hover:border-[#f3ba2f]/40 transition-colors">
                     <img src="https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=025" alt="BSC" className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -42,7 +42,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://x.com/okaiofficial" className="group flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm">
+                <a href="https://x.com/okaiofficial" target="_blank" className="group flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm">
                   <div className="w-6 h-6 rounded-md bg-white/[0.05] border border-white/[0.1] flex items-center justify-center group-hover:border-white/[0.3] transition-colors">
                     <RiTwitterXLine className="text-xs" />
                   </div>
