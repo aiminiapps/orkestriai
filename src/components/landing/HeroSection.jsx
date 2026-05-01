@@ -113,8 +113,8 @@ export default function HeroSection() {
           transition={{ delay: 0.8, duration: 1 }}
           className="max-w-7xl mx-auto px-4 overflow-hidden relative pb-10"
         >
-          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#110f24] to-transparent z-10 rounded-l-2xl" />
-          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#110f24] to-transparent z-10 rounded-r-2xl" />
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#080a12] to-transparent z-10 rounded-l-2xl" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#080a12] to-transparent z-10 rounded-r-2xl" />
           
           <div className="flex gap-12 sm:gap-24 animate-marquee whitespace-nowrap items-center w-max">
             {[...cryptoLogos, ...cryptoLogos].map((logo, i) => (
