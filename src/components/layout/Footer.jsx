@@ -42,7 +42,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="group flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm">
+                <a href="https://x.com/okaiofficial" className="group flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm">
                   <div className="w-6 h-6 rounded-md bg-white/[0.05] border border-white/[0.1] flex items-center justify-center group-hover:border-white/[0.3] transition-colors">
                     <RiTwitterXLine className="text-xs" />
                   </div>
