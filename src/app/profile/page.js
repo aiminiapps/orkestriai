@@ -459,17 +459,43 @@ export default function ProfilePage() {
                         </div>
                       )}
 
-                      <button
+                      <motion.button
                         onClick={handleWithdraw}
                         disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) < 10}
-                        className="w-full py-3 rounded-xl bg-gradient-to-r from-[#7c75ff] to-[#2dd4a0] text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                        whileHover={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) < 10 ? {} : { scale: 1.02 }}
+                        whileTap={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) < 10 ? {} : { scale: 0.98 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                        className={`w-full relative rounded-xl overflow-hidden group ${withdrawing || !withdrawAmount || parseFloat(withdrawAmount) < 10 ? "opacity-50 cursor-not-allowed" : "hover:shadow-[0_0_35px_-5px_rgba(124,117,255,0.6)] cursor-pointer"}`}
                       >
-                        {withdrawing ? (
-                          <><RiLoader4Line className="animate-spin" /> Signing & Sending...</>
-                        ) : (
-                          <><RiSendPlaneLine /> Withdraw OKAI</>
-                        )}
-                      </button>
+                        <div 
+                          className="w-full h-full rounded-xl py-3 flex items-center justify-center font-bold text-sm text-white tracking-wide transition-all duration-500 relative z-10"
+                          style={{
+                            background: 'linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)'
+                          }}
+                        >
+                          {/* Noise overlay */}
+                          <div 
+                            className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
+                            style={{
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                            }}
+                          />
+                          
+                          {/* Inner subtle glow/shadow for 3D depth */}
+                          <div className="absolute inset-0 rounded-xl shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-4px_10px_rgba(0,0,0,0.15)] pointer-events-none" />
+
+                          {/* Sweeping light effect on hover */}
+                          <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1000ms] ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none" />
+
+                          <div className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2">
+                            {withdrawing ? (
+                              <><RiLoader4Line className="animate-spin text-lg" /> Signing & Sending...</>
+                            ) : (
+                              <><RiSendPlaneLine className="text-lg" /> Withdraw OKAI</>
+                            )}
+                          </div>
+                        </div>
+                      </motion.button>
                     </div>
                   )}
                 </motion.div>
