@@ -29,7 +29,7 @@ export default function BottomCTASection() {
                   <RiArrowRightLine className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
-              <Link href="/about">
+              <Link href="https://orkestri-ai.gitbook.io/orkestri-ai-docs" target="_blank">
                 <button className="px-8 py-4 rounded-full bg-white/[0.05] border border-white/[0.1] text-white font-medium text-sm hover:bg-white/[0.1] transition-colors">
                   View Documentation
                 </button>
