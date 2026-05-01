@@ -96,12 +96,29 @@ model UserReward {
 model RewardLog {
   id            String   @id @default(cuid())
   walletAddress String
-  action        String   // "analysis" | "vote" | "compare"
+  action        String   // "analysis" | "vote" | "compare" | "withdrawal"
   amount        Int
-  referenceId   String?  // analysisId or compareId
+  referenceId   String?  // analysisId, compareId, or txHash
   createdAt     DateTime @default(now())
 
   @@index([walletAddress])
   @@index([createdAt])
   @@map("reward_logs")
+}
+
+model WithdrawalLog {
+  id            String   @id @default(cuid())
+  walletAddress String
+  amount        Int
+  txHash        String?
+  status        String   @default("pending") // "pending" | "confirmed" | "failed"
+  blockNumber   Int?
+  gasUsed       Int?
+  processingMs  Int?
+  createdAt     DateTime @default(now())
+
+  @@index([walletAddress])
+  @@index([txHash])
+  @@index([createdAt])
+  @@map("withdrawal_logs")
 }

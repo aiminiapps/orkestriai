@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
+import { useAppKit, useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import { createWalletClient, custom } from "viem";
+import { bsc } from "viem/chains";
 import {
   RiWallet3Line,
   RiHistoryLine,
@@ -16,6 +18,10 @@ import {
   RiCheckboxCircleLine,
   RiArrowLeftRightLine,
   RiSparklingLine,
+  RiSendPlaneLine,
+  RiLoader4Line,
+  RiShieldCheckLine,
+  RiCloseLine,
 } from "react-icons/ri";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
@@ -93,11 +99,72 @@ function RewardLogItem({ log }) {
 export default function ProfilePage() {
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
+  const { walletProvider } = useAppKitProvider("eip155");
   const [rewards, setRewards] = useState(null);
   const [analyses, setAnalyses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("activity");
+
+  // Withdraw state
+  const [showWithdraw, setShowWithdraw] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawResult, setWithdrawResult] = useState(null);
+  const [withdrawError, setWithdrawError] = useState("");
+
+  const refreshRewards = useCallback(() => {
+    if (!address) return;
+    fetch(`/api/rewards?wallet=${encodeURIComponent(address)}`)
+      .then((r) => r.json())
+      .then((data) => setRewards(data))
+      .catch(console.error);
+  }, [address]);
+
+  const handleWithdraw = async () => {
+    const amt = parseFloat(withdrawAmount);
+    if (!amt || amt < 10) return setWithdrawError("Minimum withdrawal is 10 OKAI");
+    if (amt > (rewards?.balance || 0)) return setWithdrawError("Insufficient balance");
+
+    setWithdrawing(true);
+    setWithdrawError("");
+    setWithdrawResult(null);
+
+    try {
+      if (!walletProvider) throw new Error("Wallet provider not ready. Please reconnect.");
+      
+      const nonce = crypto.randomUUID();
+      const expiry = Math.floor(Date.now() / 1000) + 300; // 5 min
+      const message = `Orkestri AI Withdrawal\nAmount: ${amt} OKAI\nWallet: ${address}\nNonce: ${nonce}\nExpiry: ${expiry}`;
+
+      const walletClient = createWalletClient({
+        chain: bsc,
+        transport: custom(walletProvider),
+      });
+
+      const signature = await walletClient.signMessage({
+        account: address,
+        message,
+      });
+
+      const res = await fetch("/api/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address, message, signature, nonce, expiry: String(expiry), amount: String(amt) }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Withdrawal failed");
+
+      setWithdrawResult(data);
+      setWithdrawAmount("");
+      refreshRewards();
+    } catch (err) {
+      setWithdrawError(err?.shortMessage || err?.message || "Withdrawal failed");
+    } finally {
+      setWithdrawing(false);
+    }
+  };
 
   const truncatedAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -114,21 +181,15 @@ export default function ProfilePage() {
   useEffect(() => {
     if (isConnected && address) {
       setLoading(true);
+      refreshRewards();
 
-      // Fetch rewards
-      fetch(`/api/rewards?wallet=${encodeURIComponent(address)}`)
-        .then((r) => r.json())
-        .then((data) => setRewards(data))
-        .catch(console.error);
-
-      // Fetch history
       fetch(`/api/history?wallet=${encodeURIComponent(address)}&limit=8`)
         .then((r) => r.json())
         .then((data) => setAnalyses(data.analyses || []))
         .catch(console.error)
         .finally(() => setLoading(false));
     }
-  }, [address, isConnected]);
+  }, [address, isConnected, refreshRewards]);
 
   // Not connected state
   if (!isConnected) {
@@ -193,9 +254,20 @@ export default function ProfilePage() {
           <motion.div
             variants={fadeUp}
             custom={0}
-            className="rounded-2xl bg-[#0b0c12] border border-white/[0.06] overflow-hidden mb-6"
+            className="rounded-[32px] bg-[#0b0c12] border border-white/[0.06] overflow-hidden mb-6 relative group"
           >
-            <div className="p-6">
+            {/* Cinematic Background */}
+            <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-700 pointer-events-none" 
+                 style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+            <svg className="absolute inset-0 w-full h-full opacity-[0.15] pointer-events-none mix-blend-overlay z-10 transition-opacity duration-700">
+              <filter id="cinematicNoiseProfile">
+                <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+              </filter>
+              <rect width="100%" height="100%" filter="url(#cinematicNoiseProfile)" />
+            </svg>
+
+            <div className="p-6 sm:p-8 relative z-20">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                 {/* Seed Avatar */}
                 <SeedAvatar address={address} size={72} />
@@ -244,9 +316,19 @@ export default function ProfilePage() {
           <motion.div
             variants={fadeUp}
             custom={1}
-            className="rounded-2xl bg-[#0b0c12] border border-[#f7c94b]/15 overflow-hidden mb-6"
+            className="rounded-[32px] bg-[#0b0c12] border border-[#f7c94b]/20 overflow-hidden mb-6 relative group"
           >
-            <div className="p-6 sm:p-8">
+            {/* Cinematic Noise & Glow Effects */}
+            <div className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700 pointer-events-none" 
+                 style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+            <div className="absolute top-[50%] left-[85%] -translate-x-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none">
+               <div className="absolute inset-0 blur-[80px] scale-[1.5] transition-opacity duration-700 opacity-20 group-hover:opacity-40 bg-[#f7c94b]" />
+            </div>
+            <svg className="absolute inset-0 w-full h-full opacity-[0.15] pointer-events-none mix-blend-overlay z-10">
+              <rect width="100%" height="100%" filter="url(#cinematicNoiseProfile)" />
+            </svg>
+
+            <div className="p-6 sm:p-8 relative z-20">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <p className="text-[10px] text-white/25 uppercase tracking-[0.2em] font-semibold mb-1">
@@ -259,53 +341,141 @@ export default function ProfilePage() {
                     <span className="text-sm text-[#f7c94b]/50 font-bold">OKAI</span>
                   </div>
                 </div>
-                <div className="w-14 h-14 rounded-2xl bg-[#f7c94b]/8 border border-[#f7c94b]/20 flex items-center justify-center">
-                  <RiCoinLine className="text-2xl text-[#f7c94b]" />
-                </div>
+                <button
+                  onClick={() => { setShowWithdraw(true); setWithdrawResult(null); setWithdrawError(""); }}
+                  disabled={(rewards?.balance || 0) < 10}
+                  className="px-5 py-2.5 rounded-xl bg-[#f7c94b]/10 border border-[#f7c94b]/25 text-[#f7c94b] text-xs font-semibold hover:bg-[#f7c94b]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RiSendPlaneLine /> Withdraw
+                </button>
               </div>
 
               {/* Earnings breakdown */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  {
-                    label: "Analyses",
-                    count: rewards?.analysisCount || 0,
-                    earned: (rewards?.analysisCount || 0) * 30,
-                    icon: RiSwordLine,
-                    color: "#7c75ff",
-                  },
-                  {
-                    label: "Compares",
-                    count: rewards?.compareCount || 0,
-                    earned: (rewards?.compareCount || 0) * 20,
-                    icon: RiArrowLeftRightLine,
-                    color: "#2dd4a0",
-                  },
-                  {
-                    label: "Votes",
-                    count: rewards?.voteCount || 0,
-                    earned: (rewards?.voteCount || 0) * 10,
-                    icon: RiCheckboxCircleLine,
-                    color: "#f7c94b",
-                  },
+                  { label: "Analyses", count: rewards?.analysisCount || 0, icon: RiSwordLine, color: "#7c75ff" },
+                  { label: "Compares", count: rewards?.compareCount || 0, icon: RiArrowLeftRightLine, color: "#2dd4a0" },
+                  { label: "Votes", count: rewards?.voteCount || 0, icon: RiCheckboxCircleLine, color: "#f7c94b" },
                 ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3.5"
-                  >
-                    <stat.icon
-                      className="text-sm mb-2"
-                      style={{ color: stat.color }}
-                    />
+                  <div key={stat.label} className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3.5">
+                    <stat.icon className="text-sm mb-2" style={{ color: stat.color }} />
                     <p className="text-lg font-bold font-mono">{stat.count}</p>
-                    <p className="text-[9px] text-white/25 uppercase tracking-widest">
-                      {stat.label}
-                    </p>
+                    <p className="text-[9px] text-white/25 uppercase tracking-widest">{stat.label}</p>
                   </div>
                 ))}
               </div>
             </div>
           </motion.div>
+
+          {/* ─── Withdraw Modal ─── */}
+          <AnimatePresence>
+            {showWithdraw && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                onClick={() => !withdrawing && setShowWithdraw(false)}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="bg-[#0b0c12] border border-white/[0.08] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-5 border-b border-white/[0.05]">
+                    <div>
+                      <h3 className="text-base font-bold text-white">Withdraw OKAI</h3>
+                      <p className="text-[11px] text-white/30 mt-0.5">Send tokens directly to your wallet</p>
+                    </div>
+                    <button onClick={() => !withdrawing && setShowWithdraw(false)} className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors cursor-pointer">
+                      <RiCloseLine className="text-white/40" />
+                    </button>
+                  </div>
+
+                  {/* Success State */}
+                  {withdrawResult ? (
+                    <div className="p-6 text-center">
+                      <div className="w-14 h-14 rounded-full bg-[#2dd4a0]/10 border border-[#2dd4a0]/20 flex items-center justify-center mx-auto mb-4">
+                        <RiCheckLine className="text-2xl text-[#2dd4a0]" />
+                      </div>
+                      <p className="text-white font-bold text-lg mb-1">Withdrawal {withdrawResult.status === "pending" ? "Submitted" : "Confirmed"}</p>
+                      <p className="text-white/40 text-sm mb-4">{withdrawResult.amount} OKAI sent to your wallet</p>
+                      <a
+                        href={withdrawResult.explorer}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-xs text-white/60 hover:text-white/80 transition-colors"
+                      >
+                        View on BscScan <RiExternalLinkLine />
+                      </a>
+                      <button
+                        onClick={() => { setShowWithdraw(false); setWithdrawResult(null); }}
+                        className="block w-full mt-4 py-2.5 text-xs text-white/30 hover:text-white/50 transition-colors cursor-pointer"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  ) : (
+                    /* Form */
+                    <div className="p-5 space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-xs font-semibold text-white/60">Amount</label>
+                          <button
+                            onClick={() => setWithdrawAmount(String(rewards?.balance || 0))}
+                            className="text-[10px] text-[#f7c94b] font-semibold hover:underline cursor-pointer"
+                          >
+                            MAX: {rewards?.balance || 0} OKAI
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min="10"
+                            max={rewards?.balance || 0}
+                            value={withdrawAmount}
+                            onChange={(e) => { setWithdrawAmount(e.target.value); setWithdrawError(""); }}
+                            placeholder="Enter amount (min 10)"
+                            className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-sm text-white font-mono placeholder:text-white/20 outline-none focus:border-[#f7c94b]/40 transition-colors"
+                            disabled={withdrawing}
+                          />
+                          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/25 font-bold">OKAI</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                        <RiShieldCheckLine className="text-[#2dd4a0] text-sm mt-0.5 shrink-0" />
+                        <p className="text-[11px] text-white/30 leading-relaxed">
+                          You will sign a message to verify ownership. OKAI tokens are sent as BEP-20 on BSC Mainnet directly to your connected wallet.
+                        </p>
+                      </div>
+
+                      {withdrawError && (
+                        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                          <p className="text-xs text-red-400 font-medium">{withdrawError}</p>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={handleWithdraw}
+                        disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) < 10}
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-[#f7c94b] to-[#f3ba2f] text-black font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        {withdrawing ? (
+                          <><RiLoader4Line className="animate-spin" /> Signing & Sending...</>
+                        ) : (
+                          <><RiSendPlaneLine /> Withdraw OKAI</>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* ─── Tabs ─── */}
           <motion.div variants={fadeUp} custom={2}>
