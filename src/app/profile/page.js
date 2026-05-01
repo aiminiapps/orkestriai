@@ -62,7 +62,7 @@ const fadeUp = {
 function RewardLogItem({ log }) {
   const icons = {
     analysis: <RiSwordLine className="text-[#7c75ff]" />,
-    vote: <RiCheckboxCircleLine className="text-[#f7c94b]" />,
+    vote: <RiCheckboxCircleLine className="text-[#4a9eff]" />,
     compare: <RiArrowLeftRightLine className="text-[#2dd4a0]" />,
   };
   const labels = {
@@ -89,7 +89,7 @@ function RewardLogItem({ log }) {
           })}
         </p>
       </div>
-      <span className="text-xs font-bold font-mono text-[#f7c94b]">
+      <span className="text-xs font-bold font-mono text-[#2dd4a0]">
         +{log.amount} OKAI
       </span>
     </div>
@@ -222,7 +222,7 @@ export default function ProfilePage() {
               {[
                 { action: "Analysis", amount: 30, icon: RiSwordLine, color: "#7c75ff" },
                 { action: "Compare", amount: 20, icon: RiArrowLeftRightLine, color: "#2dd4a0" },
-                { action: "Vote", amount: 10, icon: RiCheckboxCircleLine, color: "#f7c94b" },
+                { action: "Vote", amount: 10, icon: RiCheckboxCircleLine, color: "#4a9eff" },
               ].map((r) => (
                 <div
                   key={r.action}
@@ -316,13 +316,13 @@ export default function ProfilePage() {
           <motion.div
             variants={fadeUp}
             custom={1}
-            className="rounded-[32px] bg-[#0b0c12] border border-[#f7c94b]/20 overflow-hidden mb-6 relative group"
+            className="rounded-[32px] bg-[#0b0c12] border border-[#7c75ff]/20 overflow-hidden mb-6 relative group"
           >
             {/* Cinematic Noise & Glow Effects */}
             <div className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700 pointer-events-none" 
                  style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
             <div className="absolute top-[50%] left-[85%] -translate-x-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none">
-               <div className="absolute inset-0 blur-[80px] scale-[1.5] transition-opacity duration-700 opacity-20 group-hover:opacity-40 bg-[#f7c94b]" />
+               <div className="absolute inset-0 blur-[80px] scale-[1.5] transition-opacity duration-700 opacity-20 group-hover:opacity-40 bg-[#7c75ff]" />
             </div>
             <svg className="absolute inset-0 w-full h-full opacity-[0.15] pointer-events-none mix-blend-overlay z-10">
               <rect width="100%" height="100%" filter="url(#cinematicNoiseProfile)" />
@@ -335,16 +335,16 @@ export default function ProfilePage() {
                     OKAI Balance
                   </p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-extrabold font-mono text-[#f7c94b]">
+                    <span className="text-4xl font-extrabold font-mono text-[#7c75ff]">
                       {rewards?.balance?.toLocaleString() || "0"}
                     </span>
-                    <span className="text-sm text-[#f7c94b]/50 font-bold">OKAI</span>
+                    <span className="text-sm text-[#7c75ff]/50 font-bold">OKAI</span>
                   </div>
                 </div>
                 <button
                   onClick={() => { setShowWithdraw(true); setWithdrawResult(null); setWithdrawError(""); }}
                   disabled={(rewards?.balance || 0) < 10}
-                  className="px-5 py-2.5 rounded-xl bg-[#f7c94b]/10 border border-[#f7c94b]/25 text-[#f7c94b] text-xs font-semibold hover:bg-[#f7c94b]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#2dd4a0]/10 border border-[#2dd4a0]/25 text-[#2dd4a0] text-xs font-semibold hover:bg-[#2dd4a0]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
                 >
                   <RiSendPlaneLine /> Withdraw
                 </button>
@@ -355,7 +355,7 @@ export default function ProfilePage() {
                 {[
                   { label: "Analyses", count: rewards?.analysisCount || 0, icon: RiSwordLine, color: "#7c75ff" },
                   { label: "Compares", count: rewards?.compareCount || 0, icon: RiArrowLeftRightLine, color: "#2dd4a0" },
-                  { label: "Votes", count: rewards?.voteCount || 0, icon: RiCheckboxCircleLine, color: "#f7c94b" },
+                  { label: "Votes", count: rewards?.voteCount || 0, icon: RiCheckboxCircleLine, color: "#4a9eff" },
                 ].map((stat) => (
                   <div key={stat.label} className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3.5">
                     <stat.icon className="text-sm mb-2" style={{ color: stat.color }} />
@@ -426,7 +426,7 @@ export default function ProfilePage() {
                           <label className="text-xs font-semibold text-white/60">Amount</label>
                           <button
                             onClick={() => setWithdrawAmount(String(rewards?.balance || 0))}
-                            className="text-[10px] text-[#f7c94b] font-semibold hover:underline cursor-pointer"
+                            className="text-[10px] text-[#2dd4a0] font-semibold hover:underline cursor-pointer"
                           >
                             MAX: {rewards?.balance || 0} OKAI
                           </button>
@@ -439,7 +439,7 @@ export default function ProfilePage() {
                             value={withdrawAmount}
                             onChange={(e) => { setWithdrawAmount(e.target.value); setWithdrawError(""); }}
                             placeholder="Enter amount (min 10)"
-                            className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-sm text-white font-mono placeholder:text-white/20 outline-none focus:border-[#f7c94b]/40 transition-colors"
+                            className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-sm text-white font-mono placeholder:text-white/20 outline-none focus:border-[#7c75ff]/40 transition-colors"
                             disabled={withdrawing}
                           />
                           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/25 font-bold">OKAI</span>
@@ -462,7 +462,7 @@ export default function ProfilePage() {
                       <button
                         onClick={handleWithdraw}
                         disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) < 10}
-                        className="w-full py-3 rounded-xl bg-gradient-to-r from-[#f7c94b] to-[#f3ba2f] text-black font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-[#7c75ff] to-[#2dd4a0] text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                       >
                         {withdrawing ? (
                           <><RiLoader4Line className="animate-spin" /> Signing & Sending...</>
@@ -538,7 +538,7 @@ export default function ProfilePage() {
                           <Link href={`/arena/${analysis.id}`}>
                             <div className="flex items-center gap-4 p-4 rounded-xl bg-[#0b0c12] border border-white/[0.06] hover:border-white/[0.1] transition-colors cursor-pointer group">
                               <div className="w-9 h-9 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center shrink-0">
-                                <RiCoinLine className="text-[#f7c94b] text-sm" />
+                                <RiCoinLine className="text-[#2dd4a0] text-sm" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">
@@ -548,7 +548,7 @@ export default function ProfilePage() {
                                   {analysis.question}
                                 </p>
                               </div>
-                              <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-[#f7c94b]/50">
+                              <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-[#2dd4a0]/50">
                                 +30 OKAI
                               </div>
                               <RiArrowRightLine className="text-white/10 group-hover:text-white/25 transition-colors shrink-0" />
