@@ -32,7 +32,7 @@ export default function MeetAgentsSection() {
             className="md:w-1/2"
           >
             <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
-              The Intelligence Behind<br />Every Decision
+              The Intelligence Behind<br /> <span className="text-[#01ff00]">Every Decision</span>
             </h2>
           </motion.div>
           
@@ -48,7 +48,7 @@ export default function MeetAgentsSection() {
             </p>
             <Link 
               href="/arena" 
-              className="flex items-center gap-2 text-white font-medium hover:text-[#7c75ff] transition-colors group text-sm uppercase tracking-widest"
+              className="flex items-center gap-2 text-white font-medium hover:text-[#01ff00] transition-colors group text-sm uppercase tracking-widest"
             >
               Meet The Agents
               <RiArrowRightLine className="group-hover:translate-x-1 transition-transform" />

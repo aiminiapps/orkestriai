@@ -15,7 +15,7 @@ export default function BottomCTASection() {
           <div className="w-full lg:w-5/12 flex flex-col items-start z-20">
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-[1.15] tracking-tight">
               Enter the <br />
-              <span className="text-[#7c75ff]">
+              <span className="text-[#01ff00]">
                 Intelligence Arena
               </span>
             </h2>
@@ -71,7 +71,7 @@ export default function BottomCTASection() {
                   {/* SVG Canvas Connections */}
                   <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 450">
                     {/* Core to Research */}
-                    <path d="M 400 225 C 400 120, 250 225, 250 120" fill="none" stroke="#7c75ff" strokeWidth="2" strokeDasharray="4 6" className="animate-[dash_15s_linear_infinite]" opacity="0.6" />
+                    <path d="M 400 225 C 400 120, 250 225, 250 120" fill="none" stroke="#01ff00" strokeWidth="2" strokeDasharray="4 6" className="animate-[dash_15s_linear_infinite]" opacity="0.6" />
                     
                     {/* Core to Risk */}
                     <path d="M 400 225 C 400 350, 600 225, 600 350" fill="none" stroke="#2dd4a0" strokeWidth="2" opacity="0.3" />
@@ -98,18 +98,18 @@ export default function BottomCTASection() {
                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-2 h-2 rounded-full bg-[#7c75ff] shadow-[0_0_8px_#7c75ff]" />
+                      <div className="w-2 h-2 rounded-full bg-[#01ff00] shadow-[0_0_8px_#01ff00]" />
                       <span className="text-white/80 text-[10px] font-mono uppercase tracking-wider">Research Agent</span>
                     </div>
                     <div className="space-y-2">
                       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div className="w-[85%] h-full bg-[#7c75ff] rounded-full" />
+                        <div className="w-[85%] h-full bg-[#01ff00] rounded-full" />
                       </div>
                       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div className="w-[60%] h-full bg-[#7c75ff]/50 rounded-full" />
+                        <div className="w-[60%] h-full bg-[#01ff00]/50 rounded-full" />
                       </div>
                       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div className="w-[40%] h-full bg-[#7c75ff]/30 rounded-full" />
+                        <div className="w-[40%] h-full bg-[#01ff00]/30 rounded-full" />
                       </div>
                     </div>
                   </motion.div>
@@ -147,7 +147,7 @@ export default function BottomCTASection() {
             </motion.div>
 
             {/* Ambient Background Glow behind the mockup */}
-            <div className="absolute inset-0 bg-[#7c75ff]/10 blur-[100px] rounded-full pointer-events-none -z-10" />
+            <div className="absolute inset-0 bg-[#01ff00]/10 blur-[100px] rounded-full pointer-events-none -z-10" />
             
           </div>
         </div>

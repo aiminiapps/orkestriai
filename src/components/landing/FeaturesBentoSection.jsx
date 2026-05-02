@@ -38,7 +38,7 @@ export default function FeaturesBentoSection() {
             className="text-4xl sm:text-5xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
           >
             Powerful Architecture That Makes <br className="hidden sm:block" />
-            <span className="text-[#7c75ff]">
+            <span className="text-[#01ff00]">
               Crypto Investing Decisive
             </span>
           </motion.h2>
@@ -80,7 +80,7 @@ export default function FeaturesBentoSection() {
                  {/* SVG Connecting Paths */}
                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 300">
                     {/* Center to Top-Left */}
-                    <path d="M 300 150 C 210 150, 210 80, 140 80" fill="none" stroke="#7c75ff" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_10s_linear_infinite]" opacity="0.4" />
+                    <path d="M 300 150 C 210 150, 210 80, 140 80" fill="none" stroke="#01ff00" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_10s_linear_infinite]" opacity="0.4" />
                     
                     {/* Center to Top-Right */}
                     <path d="M 300 150 C 390 150, 390 80, 460 80" fill="none" stroke="#2dd4a0" strokeWidth="1.5" strokeDasharray="4 6" className="animate-[dash_12s_linear_infinite_reverse]" opacity="0.4" />
@@ -95,14 +95,14 @@ export default function FeaturesBentoSection() {
                  {/* Nodes Overlay */}
                  
                  {/* Center Hub */}
-                 <div className="absolute left-[300px] top-[150px] -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#7c75ff]/40 shadow-[0_0_30px_#7c75ff30] flex items-center justify-center animate-[float_4s_ease-in-out_infinite]">
+                 <div className="absolute left-[300px] top-[150px] -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#1e1c2e] to-[#0b0c12] border border-[#01ff00]/40 shadow-[0_0_30px_#01ff0030] flex items-center justify-center animate-[float_4s_ease-in-out_infinite]">
                    <Image src="/agent.png" alt="OKAI" width={100} height={100} />
                  </div>
 
                  {/* Top-Left Content Card: Research */}
                  <div className="absolute left-[140px] top-[80px] -translate-x-1/2 -translate-y-1/2 z-10 bg-[#0b0c12]/90 backdrop-blur-md border border-white/[0.08] rounded-xl p-3 w-[150px] shadow-xl shadow-black/50 animate-[float_5s_ease-in-out_infinite_1s]">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 rounded-full bg-[#7c75ff] shadow-[0_0_8px_#7c75ff]" />
+                      <div className="w-2 h-2 rounded-full bg-[#01ff00] shadow-[0_0_8px_#01ff00]" />
                       <span className="text-white/80 text-[10px] font-mono uppercase tracking-wider">Research</span>
                     </div>
                     <div className="text-white/60 text-[9px] leading-relaxed">Cross-referencing whitepaper topology and tokenomics...</div>
@@ -233,9 +233,9 @@ export default function FeaturesBentoSection() {
                </div>
 
                {/* Ring 2: Middle (210px) */}
-               <div className="absolute w-[210px] h-[210px] rounded-full border border-dashed border-[#7c75ff]/30 animate-[spin_40s_linear_infinite_reverse]">
+               <div className="absolute w-[210px] h-[210px] rounded-full border border-dashed border-[#01ff00]/30 animate-[spin_40s_linear_infinite_reverse]">
                   {/* ETH - Top */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-[#7c75ff]/50 bg-[#1e1c2e] p-1.5 shadow-[0_0_15px_#7c75ff40] animate-[spin_40s_linear_infinite]">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-[#01ff00]/50 bg-[#1e1c2e] p-1.5 shadow-[0_0_15px_#01ff0040] animate-[spin_40s_linear_infinite]">
                     <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=025" alt="ETH" className="w-full h-full object-contain" />
                   </div>
                   {/* BNB - Bottom */}
@@ -260,7 +260,7 @@ export default function FeaturesBentoSection() {
                </div>
 
                {/* Soft central glow */}
-               <div className="absolute w-64 h-64 bg-[#7c75ff]/10 blur-3xl rounded-full" />
+               <div className="absolute w-64 h-64 bg-[#01ff00]/10 blur-3xl rounded-full" />
             </div>
           </motion.div>
 
@@ -303,7 +303,7 @@ export default function FeaturesBentoSection() {
                  <motion.div 
                    animate={{ y: [10, -5, 0], opacity: [0, 1] }}
                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                   className="absolute top-16 left-6 sm:left-10 w-48 bg-gradient-to-br from-[#1e1c2e]/90 to-[#0b0c12]/90 backdrop-blur-xl border border-[#7c75ff]/30 rounded-2xl p-4 shadow-[0_15px_30px_rgba(124,117,255,0.15)] group-hover:scale-[1.02] transition-transform duration-500"
+                   className="absolute top-16 left-6 sm:left-10 w-48 bg-gradient-to-br from-[#1e1c2e]/90 to-[#0b0c12]/90 backdrop-blur-xl border border-[#01ff00]/30 rounded-2xl p-4 shadow-[0_15px_30px_rgba(124,117,255,0.15)] group-hover:scale-[1.02] transition-transform duration-500"
                  >
                     <div className="flex justify-between items-center mb-3">
                       <div className="flex items-center gap-1.5">
@@ -327,8 +327,8 @@ export default function FeaturesBentoSection() {
                    transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
                    className="absolute top-24 right-4 sm:right-8 w-56 sm:w-64 bg-[#0b0c12]/90 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-3 shadow-2xl flex items-start gap-3 group-hover:-translate-y-1 transition-transform duration-500"
                  >
-                   <div className="w-8 h-8 rounded-full bg-[#7c75ff]/20 flex items-center justify-center shrink-0 mt-0.5">
-                     <RiFundsLine className="text-[#7c75ff]" />
+                   <div className="w-8 h-8 rounded-full bg-[#01ff00]/20 flex items-center justify-center shrink-0 mt-0.5">
+                     <RiFundsLine className="text-[#01ff00]" />
                    </div>
                    <div>
                      <div className="text-white text-xs font-semibold">Volume Breakout</div>

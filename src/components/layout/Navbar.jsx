@@ -101,7 +101,7 @@ export default function Navbar() {
                           : "text-white/50 group-hover:text-white"
                       )}
                     >
-                      <link.icon className={cn("text-[15px]", isActive ? "text-[#7c75ff]" : "")} />
+                      <link.icon className={cn("text-[15px]", isActive ? "text-[#01ff00]" : "")} />
                       {link.label}
                     </span>
                     {isActive && (
@@ -137,8 +137,8 @@ export default function Navbar() {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer",
                   isConnected
-                    ? "bg-[#7c75ff]/10 border border-[#7c75ff]/20 text-[#7c75ff] hover:bg-[#7c75ff]/15"
-                    : "bg-gradient-to-r from-[#7c75ff] to-[#5b54e5] text-white hover:opacity-90 shadow-lg shadow-[#7c75ff]/20"
+                    ? "bg-[#01ff00]/10 border border-[#01ff00]/20 text-[#01ff00] hover:bg-[#01ff00]/15"
+                    : "bg-gradient-to-r from-[#01ff00] to-[#5b54e5] text-white hover:opacity-90 shadow-lg shadow-[#01ff00]/20"
                 )}
               >
                 <RiWallet3Line className="text-base" />
@@ -198,7 +198,7 @@ export default function Navbar() {
                               : "text-white/60 hover:text-white hover:bg-white/[0.04]"
                           )}
                         >
-                          <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center", isActive ? "bg-[#7c75ff]/20 text-[#7c75ff]" : "bg-white/[0.04]")}>
+                          <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center", isActive ? "bg-[#01ff00]/20 text-[#01ff00]" : "bg-white/[0.04]")}>
                              <link.icon className="text-xl" />
                           </div>
                           {link.label}

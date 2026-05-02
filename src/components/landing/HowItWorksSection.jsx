@@ -63,8 +63,8 @@ const steps = [
     title: "Submit Target Token",
     desc: "Enter any crypto project or token you want deeply investigated.",
     icon: RiSearchLine,
-    color: "#7c75ff",
-    bgAccent: "from-[#7c75ff]/20 to-transparent",
+    color: "#01ff00",
+    bgAccent: "from-[#01ff00]/20 to-transparent",
     glowColor: "rgba(124, 117, 255, 0.4)",
     icons: [RiSearchLine, RiFileTextLine, RiScanLine, RiRadarLine],
     rotation: "-rotate-12",
@@ -111,7 +111,7 @@ export default function HowItWorksSection() {
             className="text-4xl sm:text-5xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
           >
             Unlock the Full Potential of <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-[#7c75ff]">
+            <span className="text-transparent bg-clip-text bg-[#01ff00]">
               Your Crypto Experience
             </span>
           </motion.h2>

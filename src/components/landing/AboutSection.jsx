@@ -22,10 +22,10 @@ const geoUrl = "/features.json";
 
 // Major hub coordinates for the network map
 const markers = [
-  { name: "New York", coordinates: [-74.006, 40.7128], color: "#7c75ff" },
+  { name: "New York", coordinates: [-74.006, 40.7128], color: "#01ff00" },
   { name: "London", coordinates: [-0.1276, 51.5072], color: "#2dd4a0" },
   { name: "Tokyo", coordinates: [139.6917, 35.6895], color: "#f7c94b" },
-  { name: "Singapore", coordinates: [103.8198, 1.3521], color: "#7c75ff" },
+  { name: "Singapore", coordinates: [103.8198, 1.3521], color: "#01ff00" },
   { name: "Dubai", coordinates: [55.2708, 25.2048], color: "#2dd4a0" },
   { name: "San Francisco", coordinates: [-122.4194, 37.7749], color: "#f7c94b" },
 ];
@@ -78,7 +78,7 @@ export default function AboutSection() {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] mb-6 text-white"
             >
               Smart Investing with{" "}
-              <span className="text-[#7c75ff]">
+              <span className="text-[#01ff00]">
                 Machine Precision
               </span>
             </motion.h2>
@@ -135,12 +135,12 @@ export default function AboutSection() {
                     <circle cx="3.5" cy="3.5" r="1.5" fill="#5F718B" opacity="0.4" />
                   </pattern>
                   <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7c75ff" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#01ff00" stopOpacity="0" />
                     <stop offset="50%" stopColor="#2dd4a0" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#7c75ff" stopOpacity="0" />
+                    <stop offset="100%" stopColor="#01ff00" stopOpacity="0" />
                   </linearGradient>
                   <linearGradient id="arcGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7c75ff" />
+                    <stop offset="0%" stopColor="#01ff00" />
                     <stop offset="100%" stopColor="#2dd4a0" />
                   </linearGradient>
                 </defs>

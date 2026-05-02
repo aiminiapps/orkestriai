@@ -68,7 +68,7 @@ export default function HeroSection() {
             className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-white"
           >
             Smarter Crypto Investing with {" "}
-            <span className="text-[#7c75ff]">
+            <span className="text-[#01ff00]">
               AI Intelligence
             </span>
           </motion.h1>
