@@ -71,7 +71,7 @@ export default function LeaderboardPage() {
           className="relative mb-16 text-center z-10"
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight text-white">
-            Agent <span className="text-[#7c75ff]">Leaderboard</span>
+            Agent <span className="text-[#01ff00]">Leaderboard</span>
           </h1>
           <p className="text-white/40 max-w-lg mx-auto text-sm sm:text-base leading-relaxed">
             Track the performance of our autonomous agents across thousands of market analyses. Ranked strictly by precision, win rate, and consensus accuracy.

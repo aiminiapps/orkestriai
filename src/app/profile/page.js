@@ -35,7 +35,7 @@ function SeedAvatar({ address, size = 80 }) {
 
   return (
     <div 
-      className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#7c75ff]/20 to-[#4a9eff]/10 border border-[#7c75ff]/20 flex-shrink-0"
+      className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#01ff00]/20 to-[#4a9eff]/10 border border-[#01ff00]/20 flex-shrink-0"
       style={{ width: size, height: size }}
     >
       <img
@@ -61,7 +61,7 @@ const fadeUp = {
 /* ─── Reward Log Item ─── */
 function RewardLogItem({ log }) {
   const icons = {
-    analysis: <RiSwordLine className="text-[#7c75ff]" />,
+    analysis: <RiSwordLine className="text-[#01ff00]" />,
     vote: <RiCheckboxCircleLine className="text-[#4a9eff]" />,
     compare: <RiArrowLeftRightLine className="text-[#2dd4a0]" />,
   };
@@ -201,8 +201,8 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="w-20 h-20 rounded-2xl bg-[#7c75ff]/10 border border-[#7c75ff]/20 flex items-center justify-center mx-auto mb-6">
-              <RiWallet3Line className="text-3xl text-[#7c75ff]" />
+            <div className="w-20 h-20 rounded-2xl bg-[#01ff00]/10 border border-[#01ff00]/20 flex items-center justify-center mx-auto mb-6">
+              <RiWallet3Line className="text-3xl text-[#01ff00]" />
             </div>
             <h1 className="text-2xl font-bold mb-3 tracking-tight">Connect Your Wallet</h1>
             <p className="text-white/35 text-sm leading-relaxed mb-8 max-w-sm mx-auto font-light">
@@ -211,7 +211,7 @@ export default function ProfilePage() {
             </p>
             <button
               onClick={() => open()}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#7c75ff] to-[#5b54e5] text-white font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#01ff00] to-[#5b54e5] text-white font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer"
             >
               <RiWallet3Line />
               Connect Wallet
@@ -220,7 +220,7 @@ export default function ProfilePage() {
             {/* Reward rate cards */}
             <div className="grid grid-cols-3 gap-3 mt-12">
               {[
-                { action: "Analysis", amount: 30, icon: RiSwordLine, color: "#7c75ff" },
+                { action: "Analysis", amount: 30, icon: RiSwordLine, color: "#01ff00" },
                 { action: "Compare", amount: 20, icon: RiArrowLeftRightLine, color: "#2dd4a0" },
                 { action: "Vote", amount: 10, icon: RiCheckboxCircleLine, color: "#4a9eff" },
               ].map((r) => (
@@ -316,13 +316,13 @@ export default function ProfilePage() {
           <motion.div
             variants={fadeUp}
             custom={1}
-            className="rounded-[32px] bg-[#0b0c12] border border-[#7c75ff]/20 overflow-hidden mb-6 relative group"
+            className="rounded-[32px] bg-[#0b0c12] border border-[#01ff00]/20 overflow-hidden mb-6 relative group"
           >
             {/* Cinematic Noise & Glow Effects */}
             <div className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700 pointer-events-none" 
                  style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
             <div className="absolute top-[50%] left-[85%] -translate-x-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none">
-               <div className="absolute inset-0 blur-[80px] scale-[1.5] transition-opacity duration-700 opacity-20 group-hover:opacity-40 bg-[#7c75ff]" />
+               <div className="absolute inset-0 blur-[80px] scale-[1.5] transition-opacity duration-700 opacity-20 group-hover:opacity-40 bg-[#01ff00]" />
             </div>
             <svg className="absolute inset-0 w-full h-full opacity-[0.15] pointer-events-none mix-blend-overlay z-10">
               <rect width="100%" height="100%" filter="url(#cinematicNoiseProfile)" />
@@ -335,10 +335,10 @@ export default function ProfilePage() {
                     OKAI Balance
                   </p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-extrabold font-mono text-[#7c75ff]">
+                    <span className="text-4xl font-extrabold font-mono text-[#01ff00]">
                       {rewards?.balance?.toLocaleString() || "0"}
                     </span>
-                    <span className="text-sm text-[#7c75ff]/50 font-bold">OKAI</span>
+                    <span className="text-sm text-[#01ff00]/50 font-bold">OKAI</span>
                   </div>
                 </div>
                 <button
@@ -353,7 +353,7 @@ export default function ProfilePage() {
               {/* Earnings breakdown */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: "Analyses", count: rewards?.analysisCount || 0, icon: RiSwordLine, color: "#7c75ff" },
+                  { label: "Analyses", count: rewards?.analysisCount || 0, icon: RiSwordLine, color: "#01ff00" },
                   { label: "Compares", count: rewards?.compareCount || 0, icon: RiArrowLeftRightLine, color: "#2dd4a0" },
                   { label: "Votes", count: rewards?.voteCount || 0, icon: RiCheckboxCircleLine, color: "#4a9eff" },
                 ].map((stat) => (
@@ -439,7 +439,7 @@ export default function ProfilePage() {
                             value={withdrawAmount}
                             onChange={(e) => { setWithdrawAmount(e.target.value); setWithdrawError(""); }}
                             placeholder="Enter amount (min 10)"
-                            className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-sm text-white font-mono placeholder:text-white/20 outline-none focus:border-[#7c75ff]/40 transition-colors"
+                            className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-sm text-white font-mono placeholder:text-white/20 outline-none focus:border-[#01ff00]/40 transition-colors"
                             disabled={withdrawing}
                           />
                           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/25 font-bold">OKAI</span>
@@ -470,7 +470,7 @@ export default function ProfilePage() {
                         <div 
                           className="w-full h-full rounded-xl py-3 flex items-center justify-center font-bold text-sm text-white tracking-wide transition-all duration-500 relative z-10"
                           style={{
-                            background: 'linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)'
+                            background: 'linear-gradient(135deg, #01ff00 0%, #01ff00 50%, #01ff00 100%)'
                           }}
                         >
                           {/* Noise overlay */}
@@ -487,7 +487,7 @@ export default function ProfilePage() {
                           {/* Sweeping light effect on hover */}
                           <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1000ms] ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none" />
 
-                          <div className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2">
+                          <div className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] text-black flex items-center justify-center gap-2">
                             {withdrawing ? (
                               <><RiLoader4Line className="animate-spin text-lg" /> Signing & Sending...</>
                             ) : (
@@ -546,7 +546,7 @@ export default function ProfilePage() {
                       </p>
                       <Link
                         href="/arena"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#7c75ff]/10 border border-[#7c75ff]/20 text-[#7c75ff] text-sm font-medium hover:bg-[#7c75ff]/15 transition-colors"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#01ff00]/10 border border-[#01ff00]/20 text-[#01ff00] text-sm font-medium hover:bg-[#01ff00]/15 transition-colors"
                       >
                         Start First Analysis
                         <RiArrowRightLine />
