@@ -138,7 +138,7 @@ export default function Navbar() {
                   "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer",
                   isConnected
                     ? "bg-[#01ff00]/10 border border-[#01ff00]/20 text-[#01ff00] hover:bg-[#01ff00]/15"
-                    : "bg-gradient-to-r from-[#01ff00] to-[#5b54e5] text-white hover:opacity-90 shadow-lg shadow-[#01ff00]/20"
+                    : "bg-gradient-to-r from-[#01ff00] to-[#01ff00] text-black hover:opacity-90 shadow-lg shadow-[#01ff00]/20"
                 )}
               >
                 <RiWallet3Line className="text-base" />
