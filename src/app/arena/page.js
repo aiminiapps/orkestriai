@@ -21,7 +21,7 @@ import { AGENTS, CATEGORIES, LANGUAGES, STYLES } from "@/lib/agents";
 import useAnalysisStore from "@/stores/useAnalysisStore";
 
 const AGENT_ICONS = {
-  research: <RiMicroscopeLine className="w-5 h-5 text-[#7c75ff]" />,
+  research: <RiMicroscopeLine className="w-5 h-5 text-[#01ff00]" />,
   market: <RiLineChartLine className="w-5 h-5 text-[#f7c94b]" />,
   risk: <RiShieldKeyholeLine className="w-5 h-5 text-[#2dd4a0]" />
 };
@@ -36,7 +36,7 @@ const QUESTION_PROMPTS = [
 // Reusable Luxury Container
 const LuxuryContainer = ({ children, className = "" }) => (
   <div 
-    className={`rounded p-[1px] relative bg-[#7c75ff]/20 ${className}`}
+    className={`rounded p-[1px] relative bg-[#01ff00]/20 ${className}`}
   >
     <div className="bg-[#0b0c10]/90 w-full h-full p-6 relative z-10 pl-8">
       {/* Left decorative pattern bar */}
@@ -75,7 +75,7 @@ const LuxuryButton = ({ children, disabled, type = "button", className = "" }) =
     <div 
       className="w-full h-full rounded-xl py-4 flex items-center justify-center font-bold text-white tracking-wide transition-all duration-500 relative z-10"
       style={{
-        background: 'linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)'
+        background: 'linear-gradient(135deg, #01ff00 0%, #01ff00 50%, #01ff00 100%)'
       }}
     >
       {/* Noise overlay */}
@@ -92,7 +92,7 @@ const LuxuryButton = ({ children, disabled, type = "button", className = "" }) =
       {/* Sweeping light effect on hover */}
       <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-[1000ms] ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none" />
 
-      <div className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)]">
+      <div className="relative text-black z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)]">
         {children}
       </div>
     </div>
@@ -142,7 +142,10 @@ export default function ArenaPage() {
     }
     setIsSearching(true);
     fetch(`https://api.coingecko.com/api/v3/search?query=${query}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
       .then(data => {
         setSuggestions(data.coins?.slice(0, 5) || []);
       })
@@ -172,6 +175,7 @@ export default function ArenaPage() {
     // Attempt to fetch contract address
     try {
       const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       const platforms = data.platforms || {};
       
@@ -225,7 +229,7 @@ export default function ArenaPage() {
           {/* Header */}
           <motion.div variants={fadeUp} custom={0} className="mb-10 text-center">
             <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
-              Analysis <span className="text-[#7c75ff]">Arena</span>
+              Analysis <span className="text-[#01ff00]">Arena</span>
             </h1>
             <p className="text-white/50 max-w-2xl text-balance mx-auto text-sm md:text-base font-light">
               Submit your crypto question and let three elite AI agents compete to deliver pixel-perfect analytics and insights.
@@ -285,7 +289,7 @@ export default function ArenaPage() {
                       placeholder="e.g. Bitcoin, Solana..."
                       value={searchQuery}
                       onChange={handleSearchChange}
-                      className="w-full px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-sm shadow-none"
+                      className="w-full px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#01ff00]/80 transition-all text-sm shadow-none"
                       required
                     />
 
@@ -329,7 +333,7 @@ export default function ArenaPage() {
                       placeholder="0x... (Auto-fills if available)"
                       value={input.contractAddress}
                       onChange={(e) => setInput("contractAddress", e.target.value)}
-                      className="w-full px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-sm font-mono shadow-none"
+                      className="w-full px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#01ff00]/80 transition-all text-sm font-mono shadow-none"
                     />
                   </div>
                 </div>
@@ -337,7 +341,7 @@ export default function ArenaPage() {
                 {/* Question Text Area */}
                 <div className="mt-4">
                   <label className="flex items-center gap-2 text-sm font-semibold text-white/80 mb-2.5">
-                    <RiQuestionLine className="text-[#7c75ff]" />
+                    <RiQuestionLine className="text-[#01ff00]" />
                     Analysis Question / Request *
                   </label>
                   <textarea
@@ -345,7 +349,7 @@ export default function ArenaPage() {
                     value={input.question}
                     onChange={(e) => setInput("question", e.target.value)}
                     rows={4}
-                    className="w-full px-5 py-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-sm resize-none shadow-none leading-relaxed"
+                    className="w-full px-5 py-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white placeholder-white/20 focus:outline-none focus:border-[#01ff00]/80 transition-all text-sm resize-none shadow-none leading-relaxed"
                     required
                   />
 
@@ -383,7 +387,7 @@ export default function ArenaPage() {
                       <select
                         value={input[field.key]}
                         onChange={(e) => setInput(field.key, e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg bg-white/[0.02] border border-white/[0.06] text-white/90 focus:outline-none focus:border-[#7c75ff]/80 transition-all text-[13px] appearance-none cursor-pointer shadow-none"
+                        className="w-full px-4 py-3 rounded-lg bg-white/[0.02] border border-white/[0.06] text-white/90 focus:outline-none focus:border-[#01ff00]/80 transition-all text-[13px] appearance-none cursor-pointer shadow-none"
                       >
                         {field.options.map((opt) => (
                           <option key={opt} value={opt} className="bg-[#0b0c10] text-white/90">

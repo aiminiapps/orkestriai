@@ -123,10 +123,10 @@ const HubNode = ({ data }) => {
   const { analysis, market } = data;
   return (
     <>
-      <div className="w-[440px] rounded-2xl relative overflow-hidden border border-[#7c75ff]/20 bg-[#0b0c10]">
+      <div className="w-[440px] rounded-2xl relative overflow-hidden border border-[#01ff00]/20 bg-[#0b0c10]">
         {/* Crosshatch left strip */}
         <div
-          className="absolute left-0 top-0 w-5 h-full border-r border-[#7c75ff]/15 pointer-events-none"
+          className="absolute left-0 top-0 w-5 h-full border-r border-[#01ff00]/15 pointer-events-none"
           style={{
             backgroundImage:
               "repeating-linear-gradient(315deg, rgba(124,117,255,0.12) 0, rgba(124,117,255,0.12) 1px, transparent 0, transparent 50%)",
@@ -326,9 +326,9 @@ const AgentNode = ({ data }) => {
               <button
                 onClick={onVote}
                 disabled={voting}
-                className={`w-full relative rounded-xl overflow-hidden group py-3 flex items-center justify-center font-bold text-white tracking-wide text-[12px] transition-all cursor-pointer ${voting ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`w-full relative rounded-xl overflow-hidden group py-3 flex items-center justify-center font-bold text-black tracking-wide text-[12px] transition-all cursor-pointer ${voting ? "opacity-50 cursor-not-allowed" : ""}`}
                 style={{
-                  background: "linear-gradient(135deg, #8a84ff 0%, #7c75ff 50%, #5b54e5 100%)",
+                  background: "linear-gradient(135deg, #01ff00 0%, #01ff00 50%, #01ff00 100%)",
                 }}
               >
                 {/* Sweep */}
@@ -374,7 +374,7 @@ const SectionNode = ({ data }) => (
       style={{ borderWidth: "1px", borderStyle: "solid" }}
     >
       <div className="w-full h-full p-5 flex flex-col relative">
-        <h4 className="text-[11px] font-bold text-[#7c75ff] mb-2.5 pb-2 border-b border-white/[0.04] tracking-[0.12em] uppercase flex items-center gap-1.5 shrink-0">
+        <h4 className="text-[11px] font-bold text-[#01ff00] mb-2.5 pb-2 border-b border-white/[0.04] tracking-[0.12em] uppercase flex items-center gap-1.5 shrink-0">
           <RiSparklingLine className="text-sm" />
           {data.title}
         </h4>
@@ -540,7 +540,7 @@ const buildLayout = (analysis, responses, winner, handleVote, voting, voted, mar
       type: "smoothstep",
       animated: isWinnerNode,
       style: {
-        stroke: isWinnerNode ? "#f7c94b" : `${AGENT_MAP[agentId]?.avatarColor || "#7c75ff"}50`,
+        stroke: isWinnerNode ? "#f7c94b" : `${AGENT_MAP[agentId]?.avatarColor || "#01ff00"}50`,
         strokeWidth: isWinnerNode ? 3 : 1.5,
       },
     });
@@ -701,7 +701,7 @@ const MobileCardView = ({ analysis, responses, winner, handleVote, voting, voted
   const [expanded, setExpanded] = useState(null);
 
   return (
-    <div className="p-4 pb-24 space-y-4">
+    <div className="p-4 pb-24 space-y-4 max-w-6xl mx-auto">
       {/* Token info */}
       <div className="rounded-2xl bg-[#0b0c12] border border-white/[0.06] p-5">
         <div className="flex items-center gap-3 mb-3">
@@ -1023,12 +1023,6 @@ export default function InfiniteComparisonPage({ params }) {
             <RiShareLine />
             Share
           </button>
-
-          {/* Status */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#0a0b12]/90 backdrop-blur-2xl border border-[#7c75ff]/20 text-[#7c75ff] text-[10px] font-bold tracking-[0.15em] uppercase">
-            <RiCheckboxCircleLine />
-            Online
-          </div>
         </div>
       </div>
 
