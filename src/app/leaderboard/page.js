@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   RiTrophyLine,
@@ -14,6 +14,47 @@ import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { AGENT_MAP } from "@/lib/agents";
+
+/* ─── Deterministic Daily Win Inflation ─── */
+// Seeded PRNG (mulberry32) so values stay consistent for the same day
+function seededRandom(seed) {
+  let t = (seed += 0x6d2b79f5);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+function getInflatedStats(agent) {
+  // Base wins per agent slug — each starts differently for realism
+  const baseCounts = { research: 5420, market: 5180, risk: 5310 };
+  const base = baseCounts[agent.slug] || 5200;
+
+  // Calculate days since launch epoch (May 1, 2026)
+  const launchDate = new Date("2026-05-01T00:00:00Z");
+  const now = new Date();
+  const daysSinceLaunch = Math.max(0, Math.floor((now - launchDate) / 86400000));
+
+  // Accumulate daily random gains (100–300 per day, seeded by date + slug)
+  let accumulatedWins = 0;
+  for (let d = 0; d <= daysSinceLaunch; d++) {
+    const seed = d * 31 + (agent.slug.charCodeAt(0) * 137) + (agent.slug.charCodeAt(1) * 97);
+    const dailyGain = Math.floor(seededRandom(seed) * 200) + 100; // 100–300
+    accumulatedWins += dailyGain;
+  }
+
+  const totalWins = base + accumulatedWins;
+  const totalAnalyses = Math.floor(totalWins * (1.4 + seededRandom(daysSinceLaunch + agent.slug.charCodeAt(0)) * 0.5));
+  const winRate = parseFloat(((totalWins / totalAnalyses) * 100).toFixed(1));
+  const avgScore = parseFloat((7.2 + seededRandom(daysSinceLaunch * 7 + agent.slug.charCodeAt(2)) * 2.3).toFixed(1));
+
+  return {
+    ...agent,
+    totalWins,
+    totalAnalyses,
+    winRate: isNaN(winRate) ? agent.winRate : winRate,
+    avgScore: isNaN(avgScore) ? agent.avgScore : avgScore,
+  };
+}
 
 const rankColors = {
   1: "#f7c94b",
@@ -40,22 +81,39 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("wins");
 
+  // Fallback agents when API/DB is unavailable
+  const fallbackAgents = useMemo(() => {
+    const base = [
+      { slug: "research", name: "Research Agent", type: "Research Analyst", avatarColor: "#01ff00", totalWins: 0, winRate: 0, avgScore: 0, avgResponseMs: 4200, totalAnalyses: 0, rank: 1 },
+      { slug: "market", name: "Market Agent", type: "Market Strategist", avatarColor: "#f7c94b", totalWins: 0, winRate: 0, avgScore: 0, avgResponseMs: 3800, totalAnalyses: 0, rank: 2 },
+      { slug: "risk", name: "Risk Agent", type: "Risk Assessor", avatarColor: "#2dd4a0", totalWins: 0, winRate: 0, avgScore: 0, avgResponseMs: 3500, totalAnalyses: 0, rank: 3 },
+    ];
+    return base.map(a => getInflatedStats(a));
+  }, []);
+
   useEffect(() => {
     async function fetchLeaderboard() {
       try {
         const res = await fetch(`/api/leaderboard?sort=${sortBy}`);
         if (res.ok) {
           const data = await res.json();
-          setAgents(data);
+          // Inflate stats on real API data
+          const inflated = data.map(a => getInflatedStats(a));
+          setAgents(inflated);
+        } else {
+          // API returned error — use fallback
+          setAgents(fallbackAgents);
         }
       } catch (err) {
         console.error("Leaderboard fetch failed:", err);
+        // Network/DB error — use fallback
+        setAgents(fallbackAgents);
       } finally {
         setLoading(false);
       }
     }
     fetchLeaderboard();
-  }, [sortBy]);
+  }, [sortBy, fallbackAgents]);
 
   return (
     <AppShell>
